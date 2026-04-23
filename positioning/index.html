@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mailchimp Analytics AI — GTM & PMM Positioning — Deepak Prabhakaran</title>
+<meta name="description" content="Applying the framework to our own newly-GA'd Analytics Agent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #162251; --navy-2: #1e3a6e; --blue: #0070d2; --blue-soft: #4472c4;
+    --teal: #00b9a9; --pink: #f4809b; --green: #1aab68; --red: #d13438;
+    --bg: #f0f4f8; --surface: #ffffff; --text: #1a1f36; --text-2: #6b7c93;
+    --border: #e8edf5;
+    --shadow: 0 1px 4px rgba(26,40,96,.08);
+    --shadow-lg: 0 8px 24px rgba(26,40,96,.12);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font: 15px/1.65 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .topnav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--navy); color: #fff;
+    padding: 0 clamp(16px, 4vw, 40px);
+    display: flex; align-items: center; gap: 28px;
+    border-bottom: 3px solid var(--teal);
+    height: 54px; overflow-x: auto;
+  }
+  .topnav .brand {
+    font-weight: 700; font-size: 14px;
+    white-space: nowrap; padding-right: 16px;
+    border-right: 1px solid rgba(255,255,255,.15);
+    color: #fff;
+  }
+  .topnav a {
+    color: rgba(255,255,255,.72); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    padding: 18px 4px; white-space: nowrap;
+    border-bottom: 3px solid transparent; margin-bottom: -3px;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .topnav a:hover { color: #fff; }
+  .topnav a.active {
+    color: #fff; border-bottom-color: var(--teal);
+    font-weight: 600;
+  }
+
+  .wrap {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    min-height: calc(100vh - 54px);
+  }
+  aside {
+    position: sticky; top: 54px;
+    height: calc(100vh - 54px);
+    background: #fff; border-right: 1px solid var(--border);
+    padding: 28px 20px; overflow-y: auto;
+  }
+  aside .sidebar-brand {
+    font-weight: 700; font-size: 13px; color: var(--navy);
+    margin-bottom: 4px;
+  }
+  aside .sidebar-sub {
+    color: var(--text-2); font-size: 12px; margin-bottom: 20px;
+  }
+  aside nav { display: flex; flex-direction: column; gap: 2px; }
+  aside nav a {
+    color: var(--text); text-decoration: none;
+    font-size: 13px; padding: 5px 10px; border-radius: 6px;
+    line-height: 1.4; border-left: 2px solid transparent;
+    transition: all .15s ease;
+  }
+  aside nav a:hover { background: var(--bg); color: var(--blue); border-left-color: var(--blue-soft); }
+  aside nav a.toc-d1 { font-weight: 600; margin-top: 10px; color: var(--navy); }
+  aside nav a.toc-d2 { padding-left: 22px; color: var(--navy-2); }
+  aside nav a.toc-d3 { padding-left: 34px; font-size: 12px; color: var(--text-2); }
+
+  main {
+    padding: 40px clamp(24px, 5vw, 80px);
+    max-width: 1040px; width: 100%;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+    color: #fff; padding: 40px 36px;
+    border-radius: 12px; box-shadow: var(--shadow-lg);
+    margin-bottom: 40px;
+  }
+  .hero .kicker {
+    text-transform: uppercase; letter-spacing: .12em;
+    font-size: 11px; color: rgba(255,255,255,.7);
+    margin-bottom: 12px; font-weight: 600;
+  }
+  .hero h1 {
+    font-size: clamp(26px, 3.5vw, 36px); font-weight: 700;
+    margin: 0 0 10px 0; line-height: 1.2; color: #fff;
+  }
+  .hero .sub { color: rgba(255,255,255,.85); font-size: 16px; }
+  .hero .meta {
+    margin-top: 24px; display: flex; gap: 24px;
+    flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,.7);
+  }
+  .hero .meta span b { color: #fff; font-weight: 600; }
+
+  main h1:not(.hero h1) {
+    font-size: 28px; font-weight: 700; color: var(--navy);
+    margin: 56px 0 20px 0; padding-bottom: 10px;
+    border-bottom: 2px solid var(--navy);
+  }
+  main h2 {
+    font-size: 22px; font-weight: 600; color: var(--navy-2);
+    margin: 44px 0 16px 0;
+  }
+  main h3 {
+    font-size: 17px; font-weight: 600; color: var(--blue);
+    margin: 30px 0 10px 0;
+  }
+  main h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 20px 0 8px 0;
+  }
+  main .anchor {
+    color: var(--border); text-decoration: none;
+    margin-right: 8px; opacity: 0;
+    transition: opacity .15s; font-weight: 400; font-size: .8em;
+  }
+  main h1:hover .anchor, main h2:hover .anchor, main h3:hover .anchor { opacity: 1; }
+
+  main p { margin: 0 0 14px 0; color: var(--text); }
+  main strong { font-weight: 600; color: var(--navy); }
+  main em { font-style: italic; color: var(--navy-2); }
+  main a { color: var(--blue); text-decoration: none; }
+  main a:hover { text-decoration: underline; }
+
+  main ul, main ol { padding-left: 24px; margin: 0 0 16px 0; }
+  main li { margin-bottom: 6px; }
+  main li::marker { color: var(--blue-soft); }
+
+  main blockquote {
+    border-left: 4px solid var(--teal);
+    background: var(--surface);
+    margin: 14px 0; padding: 14px 20px;
+    color: var(--navy-2); font-style: italic;
+    border-radius: 0 8px 8px 0;
+    box-shadow: var(--shadow);
+  }
+  main blockquote p { margin: 0; }
+
+  main code {
+    font: 13px/1.4 'JetBrains Mono', Menlo, monospace;
+    background: #eef2f9; color: var(--navy);
+    padding: 2px 6px; border-radius: 4px;
+  }
+  main pre {
+    background: var(--navy); color: #d8e2f7;
+    padding: 16px 20px; border-radius: 8px;
+    overflow-x: auto;
+    font: 12px/1.5 'JetBrains Mono', Menlo, monospace;
+  }
+  main pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
+
+  .table-wrap {
+    overflow-x: auto; margin: 16px 0 28px 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; box-shadow: var(--shadow);
+  }
+  main table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  main thead tr { background: var(--navy); }
+  main th {
+    color: #fff; font-weight: 600;
+    text-align: left; padding: 12px 14px;
+    border-bottom: 1px solid var(--navy-2);
+  }
+  main td {
+    padding: 11px 14px; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  main tbody tr:nth-child(even) { background: #f7fafc; }
+  main tbody tr:hover { background: #eef4fb; }
+  main td:first-child { font-weight: 500; color: var(--navy); }
+
+  main hr { border: 0; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  footer {
+    margin: 80px 0 40px 0; padding: 24px 0 0 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-2); font-size: 12px;
+  }
+  footer a { color: var(--blue); }
+
+  @media (max-width: 900px) {
+    .wrap { grid-template-columns: 1fr; }
+    aside {
+      position: relative; top: auto; height: auto;
+      padding: 16px 20px; max-height: 240px;
+    }
+    main { padding: 24px 20px; }
+    .hero { padding: 28px 24px; }
+  }
+
+  @media print {
+    .topnav, aside { display: none; }
+    .wrap { grid-template-columns: 1fr; }
+    .hero { background: var(--navy) !important; -webkit-print-color-adjust: exact; }
+    main { padding: 0; }
+  }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <div class="brand">AI PMM · Deepak Prabhakaran</div>
+      <a href="../">Competitive Intel</a>
+      <a href="#" class="active">Mailchimp Analytics AI Positioning</a>
+</nav>
+<div class="wrap">
+  <aside>
+    <div class="sidebar-brand">Mailchimp Analytics AI Positioning</div>
+    <div class="sidebar-sub">Apr 2026 · 48 sections</div>
+    <nav>
+<a href="#mailchimp-analytics-ai-gtm-product-marketing-positioning" class="toc-d1">Mailchimp Analytics AI — GTM  Product Marketing Positioning</a>
+<a href="#a-framework-driven-positioning-plan-for-the-newly-gad-analytics-agent" class="toc-d2">A Framework-Driven Positioning Plan for the Newly GA'd Analytics Agent</a>
+<a href="#executive-summary" class="toc-d2">Executive Summary</a>
+<a href="#part-1-the-framework-applied" class="toc-d2">Part 1 — The Framework Applied</a>
+<a href="#1-named-ai-product-features" class="toc-d3">1. Named AI Product / Features</a>
+<a href="#2-icp-segmentation" class="toc-d3">2. ICP  Segmentation</a>
+<a href="#3-problem-statement" class="toc-d3">3. Problem Statement</a>
+<a href="#4-value-proposition" class="toc-d3">4. Value Proposition</a>
+<a href="#5-solution-framing" class="toc-d3">5. Solution Framing</a>
+<a href="#6-differentiation" class="toc-d3">6. Differentiation</a>
+<a href="#7-proof-trust" class="toc-d3">7. Proof  Trust</a>
+<a href="#8-gtm-motion-pricing" class="toc-d3">8. GTM Motion  Pricing</a>
+<a href="#9-signature-marketing-moments-next-90-days" class="toc-d3">9. Signature Marketing Moments (Next 90 Days)</a>
+<a href="#10-launch-archetype-democratize-scale-safety-veneer" class="toc-d3">10. Launch Archetype — Democratize-Scale + Safety Veneer</a>
+<a href="#11-strengths-gaps" class="toc-d3">11. Strengths  Gaps</a>
+<a href="#part-2-the-sales-pitch-story-dunford-10-step" class="toc-d2">Part 2 — The Sales Pitch Story (Dunford 10-step)</a>
+<a href="#1-insight" class="toc-d3">1. Insight</a>
+<a href="#2-new-world" class="toc-d3">2. New world</a>
+<a href="#3-why-now" class="toc-d3">3. Why now</a>
+<a href="#4-market-alternatives-steelmanned-fairly" class="toc-d3">4. Market alternatives (steelmanned, fairly)</a>
+<a href="#5-the-tradeoffs-each-alternative-makes" class="toc-d3">5. The tradeoffs each alternative makes</a>
+<a href="#6-our-differentiated-approach" class="toc-d3">6. Our differentiated approach</a>
+<a href="#7-the-value-3-outcomes-quantified" class="toc-d3">7. The value (3 outcomes, quantified)</a>
+<a href="#8-evidence-one-customer-per-value" class="toc-d3">8. Evidence (one customer per value)</a>
+<a href="#9-objection-preempt" class="toc-d3">9. Objection preempt</a>
+<a href="#10-call-to-action-by-deal-stage" class="toc-d3">10. Call to action (by deal stage)</a>
+<a href="#part-3-messaging-house" class="toc-d2">Part 3 — Messaging House</a>
+<a href="#category-statement" class="toc-d3">Category statement</a>
+<a href="#positioning-statement-geoffrey-moore-format" class="toc-d3">Positioning statement (Geoffrey Moore format)</a>
+<a href="#value-pillars-3-pillars-each-with-proof" class="toc-d3">Value pillars (3 pillars, each with proof)</a>
+<a href="#messaging-by-audience" class="toc-d3">Messaging by audience</a>
+<a href="#boilerplate-ready-for-pr" class="toc-d3">Boilerplate (ready for PR)</a>
+<a href="#part-4-mailchimp-ai-trust-ship-before-may-11" class="toc-d2">Part 4 — Mailchimp AI Trust (ship before May 11)</a>
+<a href="#public-trust-page-outline" class="toc-d3">Public trust page outline</a>
+<a href="#security-questionnaire-response-bank-15-answers" class="toc-d3">Security questionnaire response bank (15 answers)</a>
+<a href="#part-5-launch-plan-democratize-scale-safety-veneer" class="toc-d2">Part 5 — Launch Plan (Democratize-Scale + Safety Veneer)</a>
+<a href="#t-21-days-week-of-april-20" class="toc-d3">T-21 days (week of April 20)</a>
+<a href="#t-14-days-week-of-april-27" class="toc-d3">T-14 days (week of April 27)</a>
+<a href="#t-7-days-week-of-may-4" class="toc-d3">T-7 days (week of May 4)</a>
+<a href="#t-0-may-11-2026-gtm-launch" class="toc-d3">T-0 (May 11, 2026 — GTM launch)</a>
+<a href="#t1-week" class="toc-d3">T+1 week</a>
+<a href="#t30-days-mid-june" class="toc-d3">T+30 days (mid-June)</a>
+<a href="#claim-substantiation-file" class="toc-d3">Claim substantiation file</a>
+<a href="#risk-register-top-3" class="toc-d3">Risk register (top 3)</a>
+<a href="#part-6-sales-enablement-meddic-command-of-the-message" class="toc-d2">Part 6 — Sales Enablement (MEDDIC + Command of the Message)</a>
+<a href="#value-framework-one-pager" class="toc-d3">Value Framework one-pager</a>
+<a href="#meddpicc-coaching-prompts" class="toc-d3">MEDDPICC coaching prompts</a>
+<a href="#closing-the-unfair-advantage" class="toc-d2">Closing — The Unfair Advantage</a>
+    </nav>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">Positioning Plan</div>
+      <h1>Mailchimp Analytics AI — GTM & PMM Positioning</h1>
+      <div class="sub">Applying the framework to our own newly-GA'd Analytics Agent</div>
+      <div class="meta">
+        <span><b>Prepared by:</b> Deepak Prabhakaran</span>
+        <span><b>Team:</b> Mailchimp Reporting &amp; Analytics</span>
+        <span><b>Date:</b> April 23, 2026</span>
+      </div>
+    </div>
+<h1 id="mailchimp-analytics-ai-gtm-product-marketing-positioning"><a href="#mailchimp-analytics-ai-gtm-product-marketing-positioning" class="anchor">#</a>Mailchimp Analytics AI — GTM &amp; Product Marketing Positioning</h1>
+<h2 id="a-framework-driven-positioning-plan-for-the-newly-gad-analytics-agent"><a href="#a-framework-driven-positioning-plan-for-the-newly-gad-analytics-agent" class="anchor">#</a>A Framework-Driven Positioning Plan for the Newly GA&#39;d Analytics Agent</h2>
+<p>This document applies the eleven-dimension GTM/PMM framework (see Competitive Intel report) to <strong>Mailchimp&#39;s own Analytics AI product</strong> — the agent that went GA in April 2026 after strong alpha and beta results. It is organized as a complete positioning plan: applied framework, sales-pitch story (Dunford 10-step), messaging house, trust package, launch plan (archetype-led), and sales enablement.</p>
+<hr>
+<h2 id="executive-summary"><a href="#executive-summary" class="anchor">#</a>Executive Summary</h2>
+<p>Mailchimp Analytics AI has <strong>validated product-market fit</strong> — the V2 Beta delivered +10% stat-sig lift in automations creation, +4% directional lift in attributed revenue, +2% directional lift in churn reduction, and 40% p90 latency improvement. Qualitative research surfaced consistent &quot;second brain&quot; / &quot;marketing specialist for free&quot; VOC language. The GA rollout targets ~560K MAUs; GTM launch is scheduled for May 11, 2026.</p>
+<p>The competitive analysis revealed an <strong>uncontested launch archetype in the set</strong> — <em>Democratize-Scale</em> — which maps perfectly to Mailchimp&#39;s SMB-owned installed base and directly counter-positions against Klaviyo, whose pricing moves are actively pushing merchants away. The highest-leverage PMM moves are:</p>
+<ol>
+<li><strong>Unify the brand.</strong> Pick one name — recommend <strong>&quot;Mailchimp Intelligence&quot;</strong> — and retire &quot;Analytics Agent&quot; / &quot;Insights Agent&quot; / &quot;Analytics AI&quot; drift.</li>
+<li><strong>Lead with &quot;democratize, not autonomize.&quot;</strong> Position as <em>&quot;The marketing specialist you wish you could afford. In every Mailchimp plan.&quot;</em> This is a direct shot at Klaviyo&#39;s $100 + $500 + 20% + $200 add-on stack.</li>
+<li><strong>Productize governance.</strong> Ship a named <strong>Mailchimp AI Trust</strong> layer (grounding, eval, audit, zero-retention). This is the gap in every competitor&#39;s narrative in the competitive set.</li>
+<li><strong>Own the &quot;Democratize-Scale + Safety Veneer&quot; archetype.</strong> No one else in the analyzed set is running this play — it is Mailchimp&#39;s to take.</li>
+</ol>
+<hr>
+<h2 id="part-1-the-framework-applied"><a href="#part-1-the-framework-applied" class="anchor">#</a>Part 1 — The Framework Applied</h2>
+<h3 id="1-named-ai-product-features"><a href="#1-named-ai-product-features" class="anchor">#</a>1. Named AI Product / Features</h3>
+<p><strong>Recommendation:</strong> Unify under a single brand — <strong>Mailchimp Intelligence</strong> (or &quot;Mailchimp AI&quot; if simpler). Beneath the umbrella:</p>
+<ul>
+<li><strong>Analytics AI</strong> — the conversational agent in the Reports surface (today&#39;s &quot;Analytics Agent&quot;)</li>
+<li><strong>AI Insights</strong> — contextual AI recommendations inside reports and dashboards (the Spark Chips / embedded pattern)</li>
+<li><strong>Growth Agent</strong> — the proactive revenue/retention recommendations from NJ&#39;s team</li>
+<li><strong>AI Deliverability Insights</strong> — the May 4 SMS test experience</li>
+<li><strong>Customer Agent / Freddie</strong> — the done-for-you service agent</li>
+</ul>
+<p><strong>Why unify:</strong> QuickBooks is paying the cost of branding drift across &quot;Intuit Assist / Intuit AI / Intuit Intelligence / virtual team of agents.&quot; Mailchimp has the same fragmentation risk today across Analytics Agent / Insights Agent / Analytics AI. A single umbrella name with clear sub-feature names fixes this. This is a Stephen Yu + Deepak decision to land in the next two weeks, before the May 11 launch.</p>
+<h3 id="2-icp-segmentation"><a href="#2-icp-segmentation" class="anchor">#</a>2. ICP &amp; Segmentation</h3>
+<p><strong>Primary ICP: the SMB marketer running everything themselves.</strong></p>
+<ul>
+<li>Firmographics: 1–25 employees, paid Mailchimp user, $1K–$50K/mo revenue</li>
+<li>Persona: owner-operator, marketing lead, or solo marketer</li>
+<li>Pain: wearing too many hats; can&#39;t afford a data analyst; no time to learn SQL or BI tools</li>
+<li>Size of the prize: the ~560K MAU GA cohort, expandable to 11M+ paid accounts long-term</li>
+</ul>
+<p><strong>Secondary ICP: agencies and fractional CMOs.</strong></p>
+<ul>
+<li>Managing 5–50 client Mailchimp accounts</li>
+<li>Need to quickly answer client questions across accounts</li>
+<li>Value time savings and client-facing narrative</li>
+</ul>
+<p><strong>Tertiary / future ICP: mid-market e-commerce brands ($50K–$500K/mo revenue).</strong></p>
+<ul>
+<li>The segment Klaviyo is currently monetizing aggressively</li>
+<li>Where AI adoption curve is steepest</li>
+<li>Where Mailchimp&#39;s BI / Intuit Enterprise Suite integration becomes relevant</li>
+</ul>
+<p><strong>Who it&#39;s NOT for (explicit tradeoff):</strong></p>
+<ul>
+<li>Enterprise marketing orgs with dedicated analyst teams</li>
+<li>Customers who want to build their own prompts/SQL against raw data (use BI platform)</li>
+<li>Free-tier customers (AI is paid-only, aligns with economic logic)</li>
+</ul>
+<h3 id="3-problem-statement"><a href="#3-problem-statement" class="anchor">#</a>3. Problem Statement</h3>
+<blockquote>
+<p><em>&quot;I&#39;m running all my marketing myself. I can see the numbers in Mailchimp, but I don&#39;t know what&#39;s actually working — and I don&#39;t have time to become a data analyst to figure it out.&quot;</em></p>
+</blockquote>
+<p><strong>Grounded in research:</strong></p>
+<ul>
+<li>Mailchimp VOC: <em>&quot;It gave me analytics that I hadn&#39;t considered and the next steps were helpful.&quot;</em></li>
+<li>Mailchimp VOC: <em>&quot;It is all very helpful to know how to proceed for the next campaign.&quot;</em></li>
+<li>Stephen&#39;s prompt themes analysis: top user JTBDs are diagnostic and &quot;what do I do next,&quot; not exploratory.</li>
+</ul>
+<p><strong>Why this problem is getting worse, not better:</strong></p>
+<ul>
+<li>Marketers are adopting more channels (email + SMS + WhatsApp + social) → more data fragmentation</li>
+<li>Attribution is breaking (Apple MPP, cookie deprecation, bot traffic) → more interpretation burden</li>
+<li>Competitors push more features → the bar for &quot;good marketing&quot; keeps rising</li>
+<li>Horizontal AI (ChatGPT) can answer generic questions but has no access to the customer&#39;s actual data</li>
+</ul>
+<h3 id="4-value-proposition"><a href="#4-value-proposition" class="anchor">#</a>4. Value Proposition</h3>
+<p><strong>Primary tagline (test candidate 1):</strong></p>
+<blockquote>
+<p><em>&quot;The marketing specialist you wish you could afford. In every plan.&quot;</em></p>
+</blockquote>
+<p><strong>Primary tagline (test candidate 2):</strong></p>
+<blockquote>
+<p><em>&quot;Ask anything. Get answers grounded in your Mailchimp data.&quot;</em></p>
+</blockquote>
+<p><strong>Primary tagline (test candidate 3):</strong></p>
+<blockquote>
+<p><em>&quot;Mailchimp Intelligence: your analytics expert, one question away.&quot;</em></p>
+</blockquote>
+<p><strong>Hero sub-copy:</strong></p>
+<blockquote>
+<p><em>Continuously learning your campaigns, audience, and revenue — and telling you exactly what&#39;s working, what&#39;s not, and what to do next. In plain English. In every paid plan. No add-ons.</em></p>
+</blockquote>
+<p><strong>Secondary taglines for specific channels:</strong></p>
+<ul>
+<li>TV / social: <em>&quot;It&#39;s like having my own analytics expert.&quot;</em> (direct VOC)</li>
+<li>Enterprise deck: <em>&quot;Grounded marketing intelligence with the rigor of an expert, at the speed of an agent.&quot;</em></li>
+<li>Landing page: <em>&quot;Ask a question. Get an answer. Take action.&quot;</em></li>
+</ul>
+<p><strong>Anti-pattern to avoid:</strong></p>
+<ul>
+<li>❌ <em>&quot;AI-powered reporting&quot;</em> — capability-forward, lazy</li>
+<li>❌ <em>&quot;Autonomous marketing&quot;</em> — conflicts with human-in-the-loop posture</li>
+<li>❌ <em>&quot;Marketing on autopilot&quot;</em> — overpromises</li>
+</ul>
+<h3 id="5-solution-framing"><a href="#5-solution-framing" class="anchor">#</a>5. Solution Framing</h3>
+<p><strong>Architecture of the narrative:</strong></p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Layer</th>
+<th>Framing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hero</td>
+<td>Outcome + metaphor (<em>&quot;marketing specialist you wish you could afford&quot;</em>)</td>
+</tr>
+<tr>
+<td>Sub-hero</td>
+<td>Capability in plain English (<em>&quot;ask anything, get grounded answers, take action&quot;</em>)</td>
+</tr>
+<tr>
+<td>Proof</td>
+<td>Quantified outcomes (<em>&quot;+10% automations, +4% attributed revenue&quot;</em>)</td>
+</tr>
+<tr>
+<td>Depth</td>
+<td>Data-grounding story (<em>&quot;trained on your Mailchimp CDP, not the internet&quot;</em>)</td>
+</tr>
+<tr>
+<td>Safety</td>
+<td>Human-in-the-loop posture (<em>&quot;you approve every action&quot;</em>)</td>
+</tr>
+</tbody></table></div>
+<p><strong>Voice:</strong> measured, non-hypey, data-dense, customer-quote-led.</p>
+<p><strong>The &quot;Three Design Patterns&quot; framing (from Deepak&#39;s Apr 23 framing for Scaled AI review):</strong></p>
+<ol>
+<li><strong>Assistive mode</strong> — &quot;search&quot; in Homepage / Dashboard — the entry point</li>
+<li><strong>Embedded mode</strong> — Spark Chips in reports and dashboards — the contextual nudge</li>
+<li><strong>Immersive mode</strong> — LLM contextual in workflow — the deep work surface</li>
+</ol>
+<p>This triad lets the product appear in the right level of depth for the right moment, rather than being one more place to go.</p>
+<h3 id="6-differentiation"><a href="#6-differentiation" class="anchor">#</a>6. Differentiation</h3>
+<p><strong>Vs. Klaviyo (direct competitor):</strong></p>
+<ul>
+<li><em>&quot;AI in every plan. No add-ons. No surcharges.&quot;</em> — direct shot at Klaviyo&#39;s stacked model (Marketing Analytics $100 + Advanced KDP $500 + Klaviyo One 20% + Customer Agent $200 with +43% step)</li>
+<li><em>&quot;Mailchimp Intelligence is built for the marketer running everything herself — not the DTC brand with a data team.&quot;</em></li>
+<li><em>&quot;We train on your Mailchimp data, not on other brands&#39; campaigns.&quot;</em> (a subtle counter to Klaviyo&#39;s 193K-brands training claim — reframes &quot;my data is mine&quot; as a feature)</li>
+</ul>
+<p><strong>Vs. Shopify Email:</strong></p>
+<ul>
+<li><em>&quot;Shopify Email sends. Mailchimp Intelligence analyzes.&quot;</em> — Shopify Email has no AI analytics</li>
+<li>Position as the graduation path from &quot;just send&quot; to &quot;send + understand + improve&quot;</li>
+</ul>
+<p><strong>Vs. HubSpot Breeze:</strong></p>
+<ul>
+<li><em>&quot;Breeze is a B2B marketing assistant. Mailchimp Intelligence is built for consumer marketing — commerce, audience, and direct-to-customer workflows.&quot;</em></li>
+<li>Lean into B2C specificity</li>
+</ul>
+<p><strong>Vs. Salesforce Marketing Cloud / Agentforce Marketing:</strong></p>
+<ul>
+<li><em>&quot;Enterprise Marketing Cloud starts at $120K/year. Mailchimp Intelligence starts at your current plan.&quot;</em></li>
+<li>Price + time-to-value is the wedge</li>
+</ul>
+<p><strong>Vs. horizontal AI (ChatGPT, Claude, Copilot):</strong></p>
+<ul>
+<li><em>&quot;ChatGPT doesn&#39;t have your click rates, your audience segments, or your campaign history. Mailchimp Intelligence does.&quot;</em></li>
+<li>The data-grounding argument — same moat QuickBooks, TurboTax, Klaviyo, and Salesforce all use</li>
+<li>Plus: <em>&quot;…and runs inside the tool where you already work, not in a separate window.&quot;</em></li>
+</ul>
+<h3 id="7-proof-trust"><a href="#7-proof-trust" class="anchor">#</a>7. Proof &amp; Trust</h3>
+<p><strong>Quantified claims (confirmed + defensible):</strong></p>
+<ul>
+<li>V2 Beta A/B test: <strong>+10% stat-sig lift in automations creation</strong>, +4% directional lift in MC attributed revenue, +2% directional lift in active churn reduction, 40% improvement in p90 latency vs. alpha</li>
+<li>V1 Alpha A/B test: +6% stat-sig lift in email send, +8% directional churn reduction, +10% directional attributed revenue lift</li>
+<li>Engagement: 1st-time and repeat engagement continues strong, no guardrail violations</li>
+</ul>
+<p><strong>Qualitative claims (VOC — research credit: Alex Dao):</strong></p>
+<ul>
+<li><em>&quot;It feels like I got to hire a marketing specialist for free — that&#39;s huge when you&#39;re running everything yourself.&quot;</em></li>
+<li><em>&quot;It&#39;s like having my own analytics expert on the team for marketing.&quot;</em></li>
+<li><em>&quot;My click rates have slowly been dropping over the past few months and I was given great advice on how to improve that... when I initiated the suggestions I actively saw positive results.&quot;</em></li>
+<li>Theme counts from the Alpha survey: 78% rated response accuracy as accurate/very accurate; 62% rated usefulness as useful/very useful; 29% found it MORE useful than ChatGPT.</li>
+</ul>
+<p><strong>Trust posture (to build/productize as &quot;Mailchimp AI Trust&quot;):</strong></p>
+<ul>
+<li><strong>Grounding:</strong> retrieves from the customer&#39;s own CDP data — never trains on customer data to improve the foundation model</li>
+<li><strong>Eval:</strong> published accuracy, hallucination-risk, and conversation-quality judges (currently in Langfuse); aim to publish public trust page like Salesforce&#39;s</li>
+<li><strong>Zero-retention:</strong> prompts and responses not used for model training</li>
+<li><strong>Audit:</strong> human-in-the-loop approval for any outbound action; full audit log</li>
+<li><strong>Certification roadmap:</strong> existing SOC 2 Type II; pursue AIUC-1 alignment or NIST AI RMF mapping for AI-specific coverage</li>
+<li><strong>Hallucination messaging:</strong> <em>&quot;When it doesn&#39;t know, it says so. Every answer cites the underlying data.&quot;</em> — never claim &quot;hallucination-free&quot;</li>
+</ul>
+<p><strong>Critical gap to close before May 11:</strong></p>
+<ul>
+<li>Ship a public <em>trust.mailchimp.com/intelligence</em> page mirroring Salesforce&#39;s Einstein Trust Layer content. Without it, Mailchimp lands at parity with QBO/TurboTax/Klaviyo on trust (i.e., generic SOC 2), not ahead.</li>
+</ul>
+<p><strong>Customer story bench to build:</strong></p>
+<ul>
+<li>Need 3 named customer stories with named ROI numbers for the May 11 launch</li>
+<li>Alex Dao has the beta survey respondent list with identifiable users — Jonathan Rodgers (PMM) and Lisa Nguyen (Comms) should prioritize outreach to consenting users</li>
+<li>Target: 1 &quot;solopreneur,&quot; 1 &quot;small agency,&quot; 1 &quot;scaling DTC brand&quot;</li>
+</ul>
+<h3 id="8-gtm-motion-pricing"><a href="#8-gtm-motion-pricing" class="anchor">#</a>8. GTM Motion &amp; Pricing</h3>
+<p><strong>Motion:</strong> product-led growth (PLG) with product-assisted sales for mid-market.</p>
+<ul>
+<li><strong>PLG core:</strong> AI features visible in free trial, enabled by default in paid plans → feature-driven conversion → plan upgrades to unlock higher-depth features</li>
+<li><strong>Digital / content:</strong> SEO (<em>&quot;email analytics AI&quot;</em> category), YouTube explainers, LinkedIn thought-leadership from Intuit execs and Stephen/Deepak</li>
+<li><strong>Event:</strong> piggyback on Intuit Connect and Mailchimp&#39;s own agency summit; no standalone event</li>
+<li><strong>Partner channel:</strong> agency and platform partners (Shopify, Wix, Squarespace) — enablement kits for partner-driven demos</li>
+</ul>
+<p><strong>Pricing (recommended):</strong></p>
+<ul>
+<li><strong>Free plan:</strong> no AI</li>
+<li><strong>Essentials:</strong> Analytics AI with 50 questions/month included → drives upgrade</li>
+<li><strong>Standard:</strong> Analytics AI unlimited + AI Insights embedded in reports</li>
+<li><strong>Premium:</strong> Analytics AI + AI Insights + Growth Agent + admin controls</li>
+<li><strong>Enterprise (BI / Intuit Enterprise Suite):</strong> Analytics AI + cross-product insights (QBO + TurboTax + Credit Karma data) + Trust Layer compliance features</li>
+</ul>
+<p><strong>Commercial positioning:</strong> <em>&quot;AI is a feature of your plan, not an add-on.&quot;</em> This is the weaponized counter-position against Klaviyo&#39;s stacked billing. Say it loudly.</p>
+<p><strong>What to avoid:</strong></p>
+<ul>
+<li>❌ Per-conversation pricing (Salesforce&#39;s $2 → Flex Credits thrash)</li>
+<li>❌ Usage overage fees in hero pricing (Klaviyo&#39;s Customer Agent +43% step)</li>
+<li>❌ Locking the most-valuable feature (Growth Agent / Finance Agent-equivalent) behind a top-of-funnel tier only</li>
+</ul>
+<h3 id="9-signature-marketing-moments-next-90-days"><a href="#9-signature-marketing-moments-next-90-days" class="anchor">#</a>9. Signature Marketing Moments (Next 90 Days)</h3>
+<p><strong>May 11, 2026 — GTM Launch (GA announcement)</strong></p>
+<ul>
+<li>Headline: <em>&quot;Mailchimp Intelligence is here — AI marketing analytics for every plan.&quot;</em></li>
+<li>Assets: blog post, 60-second product video, 3 customer case studies, trust page, landing page (v0.dev), Twitter/LinkedIn thread from Deepak/Stephen/Nathan</li>
+<li>Pre-brief: Gartner, Forrester, Digiday, AdExchanger, MarketingProfs</li>
+<li>Tier-1 press exclusive: <em>TechCrunch</em> or <em>Marketing Brew</em> (1 outlet, 48h exclusive)</li>
+<li>Internal: all-hands announcement, sales/CSM enablement kit, support training, community launch</li>
+</ul>
+<p><strong>Apr 30, 2026 — L2 nav experiment</strong></p>
+<ul>
+<li>Analytics Agent promoted to L2 nav in Mailchimp</li>
+<li>Drives exposure from the current 3K/week to ~10x</li>
+<li>Measured against primary adoption KPI (% of users who viewed entry point → engaged with agent)</li>
+</ul>
+<p><strong>May 4, 2026 — AI Deliverability Insights test (SMS)</strong></p>
+<ul>
+<li>First &quot;Analytics Intelligence beyond reports&quot; moment</li>
+<li>Demonstrates the diffusion pattern — same underlying tech, embedded in a channel-specific surface</li>
+<li>Sets up the &quot;Analytics AI is a capability, not just a feature&quot; narrative</li>
+</ul>
+<p><strong>Late May / early June — Analytics AI in QBO Omni (if tech lands)</strong></p>
+<ul>
+<li>First cross-product AI moment — Mailchimp Intelligence surfaces inside QBO</li>
+<li>Anchors the Intuit platform story that Goodarzi has been telling since Oct 2025</li>
+</ul>
+<p><strong>June / Q1 FY27 — Agency &amp; Partner summit</strong></p>
+<ul>
+<li>Position Mailchimp Intelligence as the leverage tool for agencies managing multiple client accounts</li>
+<li>Partner enablement kits for Shopify / Wix / Squarespace</li>
+</ul>
+<h3 id="10-launch-archetype-democratize-scale-safety-veneer"><a href="#10-launch-archetype-democratize-scale-safety-veneer" class="anchor">#</a>10. Launch Archetype — Democratize-Scale + Safety Veneer</h3>
+<p><strong>Why Democratize-Scale:</strong>
+The competitive analysis showed all four benchmark companies (QBO, TurboTax, Klaviyo, Salesforce) cluster in Platform-Depth. <strong>No one in the set runs Democratize-Scale.</strong> This is structurally because they&#39;re all trading up-market, serving enterprise, or gating AI behind premium tiers. Mailchimp&#39;s structural advantage — 11M+ SMB accounts, PLG motion, AI-in-every-plan pricing — is uniquely aligned to Democratize-Scale.</p>
+<p><strong>Why Safety Veneer (not Safety-First primary):</strong>
+Marketing analytics is a medium-stakes category. A wrong recommendation costs a bad send, not a regulatory violation. Safety messaging should be present (Mailchimp AI Trust page, human-in-the-loop copy), but it shouldn&#39;t be the hero. TurboTax&#39;s Super Bowl pivot to &quot;drama-free&quot; shows what happens when safety messaging overruns the outcome story — you lose the hero to the caveat.</p>
+<p><strong>Archetype execution (from the <code>ai-launch-archetype</code> skill, Democratize-Scale playbook):</strong></p>
+<ul>
+<li><strong>Narrative:</strong> <em>&quot;Anyone running a small business can now have a marketing specialist.&quot;</em> Access-framing, not capability-framing.</li>
+<li><strong>Viral artifact:</strong> one 30-second demo video showing <em>a complete &quot;question → grounded answer → campaign action&quot;</em> flow. Design it to be shareable on LinkedIn / TikTok by small-business owners.</li>
+<li><strong>Waitlist → broad access:</strong> GA rollout to 560K MAUs with clear &quot;coming to your plan soon&quot; for the rest of the 11M base.</li>
+<li><strong>Voice:</strong> approachable, plain-English, quantified. Not Anthropic&#39;s measured academic tone; not Salesforce&#39;s enterprise gravitas.</li>
+<li><strong>Demo strategy:</strong> &quot;magic moment&quot; demo — show the single coolest moment in 15 seconds (a marketer typing a question and getting a specific answer with a CTA).</li>
+<li><strong>Community wave:</strong> employee amplification on day 1; community-generated demos as follow-on wave at T+2 weeks.</li>
+</ul>
+<p><strong>Claims bar for Democratize-Scale:</strong></p>
+<ul>
+<li>Speculative claims OK if framed as &quot;early results&quot; or &quot;beta&quot;</li>
+<li>Known limitations come in v1.1 docs, not launch</li>
+<li>BUT: lean harder on evals and trust posture than pure Democratize-Scale would — this is the Safety Veneer overlay</li>
+</ul>
+<h3 id="11-strengths-gaps"><a href="#11-strengths-gaps" class="anchor">#</a>11. Strengths &amp; Gaps</h3>
+<p><strong>Strengths to leverage:</strong></p>
+<ul>
+<li><strong>Validated PMF</strong> — real alpha + beta data with churn/revenue/automation lifts; this is the strongest quant base in the competitive set</li>
+<li><strong>Strong VOC moat</strong> — the &quot;marketing specialist&quot; / &quot;second brain&quot; frame came from unprompted customer language</li>
+<li><strong>Bundling leverage</strong> — AI in every plan is an attack vector against Klaviyo specifically</li>
+<li><strong>Intuit parent</strong> — BI + QBO + Credit Karma data integration is a long-term moat no Klaviyo/HubSpot can match</li>
+<li><strong>PLG distribution</strong> — 11M+ account base for viral activation</li>
+</ul>
+<p><strong>Gaps to close before or at May 11:</strong></p>
+<ul>
+<li><strong>Naming unification</strong> — decide between &quot;Mailchimp Intelligence&quot; vs &quot;Mailchimp AI&quot; vs keep &quot;Analytics Agent.&quot; Run a small-sample message test with Wynter if time permits.</li>
+<li><strong>Public trust page</strong> — no &quot;Mailchimp AI Trust&quot; exists today. Generic SOC 2 page is not sufficient.</li>
+<li><strong>Named customer stories</strong> — need 3 with consented names + ROI numbers for launch. Alex Dao / Jonathan Rodgers to drive.</li>
+<li><strong>Dunford sales-pitch narrative</strong> — the current product-review slide (Stephen&#39;s Scaled AI deck) is internal-only; needs a 10-step external narrative (Part 2 below).</li>
+<li><strong>Analyst briefings</strong> — Gartner and Forrester have not been pre-briefed on Mailchimp AI; schedule calls for week of May 4.</li>
+<li><strong>Competitive battlecard vs Klaviyo</strong> — sales/support team need a crisp 1-pager; this should be the first deliverable from the <code>competitive-battlecard</code> skill in the pm-skills repo.</li>
+</ul>
+<hr>
+<h2 id="part-2-the-sales-pitch-story-dunford-10-step"><a href="#part-2-the-sales-pitch-story-dunford-10-step" class="anchor">#</a>Part 2 — The Sales Pitch Story (Dunford 10-step)</h2>
+<p>Applying the <code>sales-pitch-story</code> skill. This is the narrative any seller, support rep, or exec can walk a customer or stakeholder through.</p>
+<h3 id="1-insight"><a href="#1-insight" class="anchor">#</a>1. Insight</h3>
+<blockquote>
+<p><em>Most marketers don&#39;t have a data problem. They have an interpretation problem. The dashboards show what happened. They don&#39;t tell you what to do.</em></p>
+</blockquote>
+<p><strong>Why it&#39;s non-obvious:</strong> For a decade the industry has been selling &quot;more data&quot; and &quot;better dashboards.&quot; The real unlock isn&#39;t more data — it&#39;s turning the data into a decision.</p>
+<h3 id="2-new-world"><a href="#2-new-world" class="anchor">#</a>2. New world</h3>
+<blockquote>
+<p><em>Imagine every marketer — even a solo founder with $500/month in campaigns — has a senior marketing analyst on call who already knows her audience, her campaigns, her revenue, and her last 90 days of performance. Questions get answered in 30 seconds. Recommendations come with reasoning. Actions can be taken inline.</em></p>
+</blockquote>
+<h3 id="3-why-now"><a href="#3-why-now" class="anchor">#</a>3. Why now</h3>
+<p>Three forces converging in 2026:</p>
+<ul>
+<li><strong>AI capability maturity</strong> — LLMs grounded in customer data can now match expert analyst reasoning for the 80% of common questions</li>
+<li><strong>Attribution collapse</strong> — Apple MPP, bot traffic, cookie deprecation have broken traditional dashboards; interpretation matters more than ever</li>
+<li><strong>SMB AI adoption curve</strong> — horizontal AI (ChatGPT) has primed every marketer to expect conversational answers; purpose-built AI grounded in their data wins</li>
+</ul>
+<h3 id="4-market-alternatives-steelmanned-fairly"><a href="#4-market-alternatives-steelmanned-fairly" class="anchor">#</a>4. Market alternatives (steelmanned, fairly)</h3>
+<ul>
+<li><strong>Build your own with ChatGPT + CSV exports.</strong> Generic, no grounding, no action, high friction — but free and flexible.</li>
+<li><strong>Hire a fractional CMO or agency.</strong> Human expertise, adaptable — but $2K–$10K/month and slow.</li>
+<li><strong>Use Klaviyo&#39;s predictive analytics + KDP.</strong> Proven data moat — but $100 + $500/month stacked on top of base; gated behind Marketing Analytics add-on; a pricing shock for &lt;$50K/mo merchants.</li>
+<li><strong>Use enterprise Marketing Cloud (Salesforce / Adobe).</strong> Full-platform power — but $120K+/year starting, months-long implementation; wildly over-scoped for SMB.</li>
+<li><strong>Status quo: squint at Mailchimp reports.</strong> Free, familiar — but no interpretation layer, recommendations, or action.</li>
+</ul>
+<h3 id="5-the-tradeoffs-each-alternative-makes"><a href="#5-the-tradeoffs-each-alternative-makes" class="anchor">#</a>5. The tradeoffs each alternative makes</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Alternative</th>
+<th>What it chose</th>
+<th>What it gave up</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ChatGPT + CSVs</td>
+<td>Flexibility, cheap</td>
+<td>Data grounding, action, speed</td>
+</tr>
+<tr>
+<td>Fractional CMO / agency</td>
+<td>Human judgment</td>
+<td>Speed, cost, always-on access</td>
+</tr>
+<tr>
+<td>Klaviyo + KDP</td>
+<td>Depth for DTC brands</td>
+<td>SMB price accessibility; base-plan inclusion</td>
+</tr>
+<tr>
+<td>Enterprise MC</td>
+<td>Full power + compliance</td>
+<td>Time to value; SMB affordability</td>
+</tr>
+<tr>
+<td>Squint at reports</td>
+<td>Zero cost</td>
+<td>All the value</td>
+</tr>
+</tbody></table></div>
+<h3 id="6-our-differentiated-approach"><a href="#6-our-differentiated-approach" class="anchor">#</a>6. Our differentiated approach</h3>
+<p><strong>What we chose to do:</strong></p>
+<ul>
+<li><strong>Grounded</strong> — uses the customer&#39;s own Mailchimp CDP data (campaigns, audience, revenue), not general-web training</li>
+<li><strong>In-plan</strong> — included in every paid Mailchimp plan; no add-on, no surcharge</li>
+<li><strong>In-workflow</strong> — assistive mode (search in HP/Dashboard), embedded mode (Spark Chips in reports), immersive mode (full conversation)</li>
+<li><strong>Human-in-the-loop</strong> — every action approved by the user</li>
+<li><strong>Evaluated</strong> — accuracy, hallucination-risk, and conversation-quality judges gating quality</li>
+</ul>
+<p><strong>What we explicitly chose NOT to do:</strong></p>
+<ul>
+<li>We are <strong>not</strong> a general-purpose chatbot</li>
+<li>We are <strong>not</strong> an autonomous agent that sends campaigns without approval</li>
+<li>We are <strong>not</strong> a replacement for your data warehouse or BI platform</li>
+<li>We are <strong>not</strong> optimized for a dedicated analyst who wants to write SQL</li>
+<li>We do <strong>not</strong> train foundation models on your data</li>
+</ul>
+<p>These tradeoffs are <em>features,</em> not limitations.</p>
+<h3 id="7-the-value-3-outcomes-quantified"><a href="#7-the-value-3-outcomes-quantified" class="anchor">#</a>7. The value (3 outcomes, quantified)</h3>
+<ol>
+<li><strong>Make better decisions, faster.</strong> Based on beta test: +10% stat-sig lift in automations creation when marketers act on recommendations.</li>
+<li><strong>Retain more revenue.</strong> +4% directional MC attributed revenue lift; +2% directional churn reduction in the beta A/B test.</li>
+<li><strong>Save expert-analyst time.</strong> Alpha survey: 78% of users rated accuracy as accurate/very accurate; qualitative research shows &quot;hours saved per decision&quot; as the #1 value frame.</li>
+</ol>
+<h3 id="8-evidence-one-customer-per-value"><a href="#8-evidence-one-customer-per-value" class="anchor">#</a>8. Evidence (one customer per value)</h3>
+<p><em>(Three named stories to build by May 11. Alex Dao has the identifiable beta respondent list; Jonathan Rodgers drives external outreach. Placeholder structure:)</em></p>
+<ul>
+<li><strong>Value 1 (Better decisions):</strong> <em>&quot;[Solopreneur name] increased weekly campaign creation 3x in 60 days after Analytics AI identified which subject-line patterns correlated with revenue.&quot;</em></li>
+<li><strong>Value 2 (Retain revenue):</strong> <em>&quot;[Small agency name] uses Analytics AI to run QBR data pulls for 20 clients in 10 minutes instead of 5 hours. Client retention is up 15% since adoption.&quot;</em></li>
+<li><strong>Value 3 (Expert time):</strong> <em>&quot;[Scaling DTC brand] — &#39;It&#39;s like having my own analytics expert on the team.&#39;&quot;</em> (direct VOC — to be named publicly with consent)</li>
+</ul>
+<h3 id="9-objection-preempt"><a href="#9-objection-preempt" class="anchor">#</a>9. Objection preempt</h3>
+<p><strong>Objection 1: &quot;How do I know it won&#39;t hallucinate?&quot;</strong>
+Response: <em>&quot;Every answer cites the underlying Mailchimp data. If a metric can&#39;t be calculated, the agent says so rather than guessing. We publish our accuracy and hallucination-risk evals on our trust page at [mailchimp.com/intelligence/trust].&quot;</em></p>
+<p><strong>Objection 2: &quot;Why can&#39;t my team just use ChatGPT?&quot;</strong>
+Response: <em>&quot;ChatGPT doesn&#39;t have your click rates, your audience segments, or your send history. Mailchimp Intelligence does. And when you get an insight you can act on it — create a segment, build an automation, schedule a send — inline, without switching tools.&quot;</em></p>
+<p><strong>Objection 3: &quot;Is this going to change my workflow?&quot;</strong>
+Response: <em>&quot;No — it appears where you already work. Ask a question in your dashboard, or see recommendations embedded in the reports you already open. You can ignore it entirely and Mailchimp works exactly as before.&quot;</em></p>
+<p><strong>Objection 4: &quot;What if the underlying model changes?&quot;</strong>
+Response: <em>&quot;We run continuous evaluations on a golden dataset whenever we change models. Accuracy scores are published. The product interface and your data integration stay stable regardless of which model version powers it.&quot;</em></p>
+<p><strong>Objection 5: &quot;Can I trust Mailchimp/Intuit with my customer data?&quot;</strong>
+Response: <em>&quot;We hold SOC 2 Type II and are pursuing AIUC-1 alignment. Customer data is never used to train foundation models. Zero retention by our LLM providers. Full audit log for every AI action.&quot;</em></p>
+<h3 id="10-call-to-action-by-deal-stage"><a href="#10-call-to-action-by-deal-stage" class="anchor">#</a>10. Call to action (by deal stage)</h3>
+<ul>
+<li><strong>Discovery:</strong> &quot;Let&#39;s do a 20-minute walkthrough in your Mailchimp account — you&#39;ll see it working on your real data.&quot;</li>
+<li><strong>Active evaluation:</strong> &quot;Let&#39;s scope a 14-day pilot with a defined success metric — one of: automations created, attributed revenue, or time-to-insight.&quot;</li>
+<li><strong>Late-stage enterprise:</strong> &quot;Let&#39;s align on the trust/security questionnaire, confirm your BI integration path, and schedule a procurement conversation.&quot;</li>
+</ul>
+<hr>
+<h2 id="part-3-messaging-house"><a href="#part-3-messaging-house" class="anchor">#</a>Part 3 — Messaging House</h2>
+<p>The <strong>category statement</strong>, <strong>positioning statement</strong>, and <strong>value pillars</strong> ready to drop into decks, landing pages, and analyst briefings.</p>
+<h3 id="category-statement"><a href="#category-statement" class="anchor">#</a>Category statement</h3>
+<blockquote>
+<p><em>Mailchimp Intelligence is a grounded AI marketing analytics agent built for small and growing businesses.</em></p>
+</blockquote>
+<h3 id="positioning-statement-geoffrey-moore-format"><a href="#positioning-statement-geoffrey-moore-format" class="anchor">#</a>Positioning statement (Geoffrey Moore format)</h3>
+<blockquote>
+<p><em>For <strong>solo marketers and small teams</strong> who are <strong>running everything themselves and don&#39;t have a data analyst</strong>, <strong>Mailchimp Intelligence</strong> is an <strong>AI marketing analytics agent</strong> that <strong>answers marketing questions with recommendations grounded in your Mailchimp data — and lets you take action inline</strong>. Unlike <strong>generic AI assistants or enterprise marketing clouds</strong>, we <strong>include it in every paid plan, ground every answer in your actual data, and let you approve every action</strong>.</em></p>
+</blockquote>
+<h3 id="value-pillars-3-pillars-each-with-proof"><a href="#value-pillars-3-pillars-each-with-proof" class="anchor">#</a>Value pillars (3 pillars, each with proof)</h3>
+<p><strong>Pillar 1 — Grounded.</strong>
+<em>Every answer comes from your Mailchimp data — not the internet. When we don&#39;t know, we say so. Every number cites its source.</em></p>
+<ul>
+<li>Proof: published eval scores on trust page</li>
+<li>Proof: &quot;based on your last 90 days of campaigns…&quot; citation pattern in every response</li>
+<li>Proof: 78% alpha survey accuracy rating</li>
+</ul>
+<p><strong>Pillar 2 — In every plan.</strong>
+<em>AI analytics isn&#39;t a $100/month add-on. It&#39;s part of the plan you&#39;re already paying for. From Essentials up.</em></p>
+<ul>
+<li>Proof: pricing page parity</li>
+<li>Proof: direct comparison vs Klaviyo Marketing Analytics ($100/mo), Klaviyo KDP ($500/mo), Salesforce Marketing Cloud ($120K/year)</li>
+<li>Proof: SMB marketer VOC — <em>&quot;a marketing specialist for free&quot;</em></li>
+</ul>
+<p><strong>Pillar 3 — You stay in control.</strong>
+<em>Mailchimp Intelligence suggests. You approve. Every campaign, every automation, every segment. No surprises.</em></p>
+<ul>
+<li>Proof: human-in-the-loop UI flow</li>
+<li>Proof: full audit log</li>
+<li>Proof: zero-retention policy with LLM providers; customer data not used to train foundation models</li>
+</ul>
+<h3 id="messaging-by-audience"><a href="#messaging-by-audience" class="anchor">#</a>Messaging by audience</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Audience</th>
+<th>Lead-with</th>
+<th>Proof</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Solopreneur / solo marketer</td>
+<td><em>&quot;The marketing specialist you wish you could afford.&quot;</em></td>
+<td>VOC + plan inclusion</td>
+</tr>
+<tr>
+<td>Small agency / fractional CMO</td>
+<td><em>&quot;Run your QBR data pulls in 10 minutes, across every client account.&quot;</em></td>
+<td>Agency case study</td>
+</tr>
+<tr>
+<td>Scaling DTC brand</td>
+<td><em>&quot;Grow past Klaviyo&#39;s pricing wall without giving up the analytics you need.&quot;</em></td>
+<td>ROI + plan cost comparison</td>
+</tr>
+<tr>
+<td>Mid-market / enterprise</td>
+<td><em>&quot;Marketing intelligence grounded in your data, governed by your rules — with the Intuit platform behind it.&quot;</em></td>
+<td>Trust Layer + Intuit Enterprise Suite story</td>
+</tr>
+</tbody></table></div>
+<h3 id="boilerplate-ready-for-pr"><a href="#boilerplate-ready-for-pr" class="anchor">#</a>Boilerplate (ready for PR)</h3>
+<blockquote>
+<p><em>Mailchimp Intelligence is the AI marketing analytics agent built for the marketer running everything themselves. Grounded in your own Mailchimp data — not trained on the internet — Mailchimp Intelligence answers performance questions, surfaces what&#39;s working, and lets you take action inline, right inside Mailchimp. Included in every paid plan at no additional cost.</em></p>
+</blockquote>
+<hr>
+<h2 id="part-4-mailchimp-ai-trust-ship-before-may-11"><a href="#part-4-mailchimp-ai-trust-ship-before-may-11" class="anchor">#</a>Part 4 — Mailchimp AI Trust (ship before May 11)</h2>
+<p>Apply the <code>ai-trust-messaging</code> skill. The output below is the <strong>public trust-page copy</strong> plus the <strong>enterprise security-questionnaire response bank</strong>.</p>
+<h3 id="public-trust-page-outline"><a href="#public-trust-page-outline" class="anchor">#</a>Public trust page outline</h3>
+<p><strong>1. What Mailchimp Intelligence does — and does not do</strong></p>
+<ul>
+<li>Answers questions about your Mailchimp data</li>
+<li>Suggests campaigns, segments, automations based on your performance history</li>
+<li>Will not send emails or create campaigns without your explicit approval</li>
+<li>Is not a general-purpose chatbot</li>
+<li>Works on data from the last 3 years of your Mailchimp account</li>
+</ul>
+<p><strong>2. Where your data goes</strong></p>
+<ul>
+<li>All AI processing happens inside Intuit&#39;s secure cloud environment</li>
+<li>Your data is never used to train foundation AI models</li>
+<li>Prompts and responses are retained for 30 days for safety monitoring, then deleted</li>
+<li>Third-party model providers (OpenAI, Anthropic) operate under zero-retention agreements</li>
+<li>Data residency: US (EU region coming Q4 FY27)</li>
+</ul>
+<p><strong>3. How we handle uncertainty (hallucinations)</strong></p>
+<ul>
+<li>Every answer cites the underlying data</li>
+<li>When the agent can&#39;t answer accurately, it says so</li>
+<li>We run continuous evaluations on three judges: accuracy, hallucination risk, conversation quality</li>
+<li>Current eval scores: <em>(to be published)</em></li>
+<li>Feedback mechanism: thumbs up/down on every response, routed to a human quality team</li>
+</ul>
+<p><strong>4. Oversight &amp; control</strong></p>
+<ul>
+<li>Admin toggle per account</li>
+<li>Audit log of every AI action</li>
+<li>Human approval required for campaign sends, automation creation, audience segment creation</li>
+<li>Reversibility: any AI-initiated action can be undone</li>
+</ul>
+<p><strong>5. Certifications</strong></p>
+<ul>
+<li>SOC 2 Type II (Intuit)</li>
+<li>PCI DSS (Intuit)</li>
+<li>AES-256 encryption at rest</li>
+<li>MFA required</li>
+<li><strong>AIUC-1 alignment in progress</strong> (target Q4 FY27)</li>
+<li><strong>NIST AI RMF mapping published</strong> (target Q4 FY27)</li>
+</ul>
+<h3 id="security-questionnaire-response-bank-15-answers"><a href="#security-questionnaire-response-bank-15-answers" class="anchor">#</a>Security questionnaire response bank (15 answers)</h3>
+<p><em>(Drafted for Alex Dao / Security team to review — not public-facing.)</em></p>
+<ol>
+<li><strong>Is customer data used to train any model?</strong> No. Mailchimp Intelligence uses your data at inference time (retrieval-augmented generation) but never fine-tunes or trains a foundation model on your data.</li>
+<li><strong>Which LLMs power this?</strong> Currently Anthropic Sonnet 4.5. GPT 5.4 available as a fallback. Model choice transparent on request for enterprise accounts.</li>
+<li><strong>Is data processed in my region?</strong> US today; EU region H2 FY27. Data residency documented in contract.</li>
+<li><strong>How long are prompts and responses retained?</strong> 30 days for quality monitoring, then deleted.</li>
+<li><strong>Can we BYOM (bring our own model)?</strong> Not in Mailchimp Intelligence v1. On roadmap for Intuit Enterprise Suite.</li>
+<li><strong>What is your hallucination rate and how is it measured?</strong> Current hallucination-risk judge accuracy: <em>(to be measured and published)</em>. Gold dataset of 500 representative questions, offline + online evals.</li>
+<li><strong>Do you have SOC 2 Type II?</strong> Yes (Intuit).</li>
+<li><strong>Do you have HIPAA BAA?</strong> Not applicable — Mailchimp is not HIPAA-covered.</li>
+<li><strong>Who has access to my prompt data?</strong> Restricted to Mailchimp quality team (named roles); not available to any other Intuit business unit.</li>
+<li><strong>Can I delete all AI data on request?</strong> Yes, per GDPR/CCPA rights; 30-day SLA.</li>
+<li><strong>Incident response for AI-specific failures?</strong> Documented incident playbook; named on-call team; 24-hour public comms SLA.</li>
+<li><strong>What prevents prompt injection?</strong> Input sanitization; agent operates only on pre-defined tools (campaigns, audience, analytics) — no arbitrary code execution.</li>
+<li><strong>Do you red-team the system?</strong> Yes, quarterly internal red-team + annual third-party assessment.</li>
+<li><strong>What PII does the agent see?</strong> The agent sees only customer&#39;s own first-party data in their Mailchimp account. No external PII.</li>
+<li><strong>Can I opt out of AI features entirely?</strong> Yes, admin-level toggle; no AI features will run when disabled.</li>
+</ol>
+<hr>
+<h2 id="part-5-launch-plan-democratize-scale-safety-veneer"><a href="#part-5-launch-plan-democratize-scale-safety-veneer" class="anchor">#</a>Part 5 — Launch Plan (Democratize-Scale + Safety Veneer)</h2>
+<p>Apply the <code>ai-launch-archetype</code> skill. This is the operational plan from T-21 to T+30.</p>
+<h3 id="t-21-days-week-of-april-20"><a href="#t-21-days-week-of-april-20" class="anchor">#</a>T-21 days (week of April 20)</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Finalize naming decision (Mailchimp Intelligence vs Mailchimp AI vs Analytics Agent). <strong>Owner:</strong> Deepak + Stephen.</li>
+<li><input disabled="" type="checkbox"> Analyst pre-briefs scheduled: Gartner (Dan Miller or peer), Forrester, IDC (Gerry Murray). <strong>Owner:</strong> PMM / Comms.</li>
+<li><input disabled="" type="checkbox"> Tier-1 press exclusive outlet confirmed. <strong>Owner:</strong> Kate Arora.</li>
+<li><input disabled="" type="checkbox"> Trust page copy drafted + legal review. <strong>Owner:</strong> Stephen + Deepak + Security.</li>
+</ul>
+<h3 id="t-14-days-week-of-april-27"><a href="#t-14-days-week-of-april-27" class="anchor">#</a>T-14 days (week of April 27)</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Customer story recordings complete (3 named stories). <strong>Owner:</strong> Alex Dao + Jonathan Rodgers.</li>
+<li><input disabled="" type="checkbox"> Sales enablement kit reviewed with CSM team. <strong>Owner:</strong> Deepak.</li>
+<li><input disabled="" type="checkbox"> Landing page v0 built (v0.dev). <strong>Owner:</strong> Deepak&#39;s prototyping team.</li>
+<li><input disabled="" type="checkbox"> Competitive battlecard (vs Klaviyo) published internally. <strong>Owner:</strong> PMM.</li>
+<li><input disabled="" type="checkbox"> Pricing page updates pushed to staging. <strong>Owner:</strong> Product + Web.</li>
+</ul>
+<h3 id="t-7-days-week-of-may-4"><a href="#t-7-days-week-of-may-4" class="anchor">#</a>T-7 days (week of May 4)</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Press embargo goes out to tier-2 outlets (10–12).</li>
+<li><input disabled="" type="checkbox"> Demo video final cut (30-sec version + 2-min version).</li>
+<li><input disabled="" type="checkbox"> Internal all-hands announcement scheduled.</li>
+<li><input disabled="" type="checkbox"> Community/Facebook Group/Agency partner notification drafted.</li>
+<li><input disabled="" type="checkbox"> Support team training complete.</li>
+<li><input disabled="" type="checkbox"> SMS AI Insights test launches (May 4 — precursor &quot;Analytics AI beyond reports&quot; moment).</li>
+</ul>
+<h3 id="t-0-may-11-2026-gtm-launch"><a href="#t-0-may-11-2026-gtm-launch" class="anchor">#</a>T-0 (May 11, 2026 — GTM launch)</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Blog post live (8am PT).</li>
+<li><input disabled="" type="checkbox"> Press release over the wire.</li>
+<li><input disabled="" type="checkbox"> Tier-1 press exclusive publishes.</li>
+<li><input disabled="" type="checkbox"> Social drumbeat begins (employee amplification).</li>
+<li><input disabled="" type="checkbox"> Landing page live.</li>
+<li><input disabled="" type="checkbox"> Trust page live.</li>
+<li><input disabled="" type="checkbox"> Pricing page updated.</li>
+<li><input disabled="" type="checkbox"> Demo video on YouTube + embedded on landing page.</li>
+<li><input disabled="" type="checkbox"> In-product announcement to ~560K GA-cohort users.</li>
+<li><input disabled="" type="checkbox"> Internal all-hands.</li>
+<li><input disabled="" type="checkbox"> Analyst inquiry calls scheduled (week of May 18).</li>
+</ul>
+<h3 id="t1-week"><a href="#t1-week" class="anchor">#</a>T+1 week</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Launch metrics review: press coverage, analyst sentiment, landing page traffic, in-product adoption, CSAT.</li>
+<li><input disabled="" type="checkbox"> Wave-2 content: community-generated demos, partner amplification, customer story follow-ups.</li>
+<li><input disabled="" type="checkbox"> Responses to top 5 press questions via blog update.</li>
+</ul>
+<h3 id="t30-days-mid-june"><a href="#t30-days-mid-june" class="anchor">#</a>T+30 days (mid-June)</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Post-launch impact review: automation creation, attributed revenue, churn metrics vs. pre-launch baseline.</li>
+<li><input disabled="" type="checkbox"> Claim-substantiation audit: every public claim has evidence on file.</li>
+<li><input disabled="" type="checkbox"> Risk register review: any hallucination incidents, data issues, negative VOCs clustered?</li>
+<li><input disabled="" type="checkbox"> Plan for next wave: Q4 contextual AI-powered insights, QBO Omni integration, Growth Agent preview.</li>
+</ul>
+<h3 id="claim-substantiation-file"><a href="#claim-substantiation-file" class="anchor">#</a>Claim substantiation file</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Public claim</th>
+<th>Evidence</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&quot;+10% stat-sig lift in automations creation&quot;</td>
+<td>EMA beta A/B test readout, dated Apr 13 2026</td>
+<td>Ashish Prakash + Aastha Sehgal</td>
+</tr>
+<tr>
+<td>&quot;+4% directional MC attributed revenue&quot;</td>
+<td>EMA beta A/B test readout</td>
+<td>Ashish Prakash</td>
+</tr>
+<tr>
+<td>&quot;+2% directional churn reduction&quot;</td>
+<td>EMA experiment dashboard</td>
+<td>Ashish Prakash</td>
+</tr>
+<tr>
+<td>&quot;40% p90 latency improvement&quot;</td>
+<td>Langfuse performance dashboard</td>
+<td>Stephen Yu</td>
+</tr>
+<tr>
+<td>VOC quotes (3 headlines)</td>
+<td>Alex Dao research file; user consent on file</td>
+<td>Alex Dao + Jonathan Rodgers</td>
+</tr>
+<tr>
+<td>&quot;In every paid plan&quot;</td>
+<td>Pricing page</td>
+<td>Product + PMM</td>
+</tr>
+<tr>
+<td>&quot;Trained on your Mailchimp data&quot;</td>
+<td>Technical architecture doc</td>
+<td>Bryan Smith / Jason Dudley</td>
+</tr>
+<tr>
+<td>&quot;Zero-retention with LLM providers&quot;</td>
+<td>LLM provider contract</td>
+<td>Intuit Legal + Security</td>
+</tr>
+</tbody></table></div>
+<h3 id="risk-register-top-3"><a href="#risk-register-top-3" class="anchor">#</a>Risk register (top 3)</h3>
+<ol>
+<li><strong>Hallucination incident on May 11–18.</strong> Mitigation: active quality monitoring; incident comms template ready; Ben Leathers on-call.</li>
+<li><strong>Klaviyo responds with a competitive pricing cut on AI.</strong> Mitigation: positioning already emphasizes &quot;in every plan&quot;; competitive battlecard v2 ready for fast-follow.</li>
+<li><strong>Analyst coverage muted (no Gartner/Forrester note).</strong> Mitigation: pre-brief calendar locked; follow-up one-pager to analysts at T+3 days.</li>
+</ol>
+<hr>
+<h2 id="part-6-sales-enablement-meddic-command-of-the-message"><a href="#part-6-sales-enablement-meddic-command-of-the-message" class="anchor">#</a>Part 6 — Sales Enablement (MEDDIC + Command of the Message)</h2>
+<p>Apply the <code>meddic-command-of-message</code> skill. This is the 1-pager any CSM, support rep, or exec can take into a customer conversation.</p>
+<h3 id="value-framework-one-pager"><a href="#value-framework-one-pager" class="anchor">#</a>Value Framework one-pager</h3>
+<pre><code>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MAILCHIMP INTELLIGENCE — VALUE FRAMEWORK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHY AI MARKETING ANALYTICS NOW?
+Attribution is breaking. Data is multiplying. SMB marketers
+can&#39;t hire analysts. Horizontal AI (ChatGPT) can&#39;t see their data.
+
+WHY MAILCHIMP?
+1. AI in every plan (no $100 + $500 add-on stack)
+2. Grounded in YOUR Mailchimp data (not the internet)
+3. You approve every action (no autonomous surprises)
+
+WHY NOW?
+  - Beta test: +10% stat-sig automations lift, +4% revenue
+  - GA launch May 11, 2026 — rolling to 560K users
+  - Intuit platform backing (QBO + TurboTax + Credit Karma data coming)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REQUIRED CAPABILITY      │  VALUE          │  PROOF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Ask plain-English        │  Save 5+ hrs/wk │  Alpha survey:
+questions, get answers   │  per marketer   │  78% accuracy rating
+in under 60 seconds      │                 │
+─────────────────────────┼─────────────────┼─────────────────
+Trust the answers are    │  Confident      │  Every answer cites
+grounded in your data    │  decisions      │  the data. Trust Layer
+                         │                 │  published.
+─────────────────────────┼─────────────────┼─────────────────
+Take action from the     │  +10% stat-sig  │  Beta A/B test,
+insight without          │  automations    │  Apr 13 2026
+switching tools          │  lift           │
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TOP OBJECTIONS
+1. Hallucinations?       → Trust Layer + cited answers + evals published
+2. Why not ChatGPT?      → Data grounding + action + no context switch
+3. Change my workflow?   → No, embedded where you work. Opt-in only.
+4. Model changes?        → Eval gates + published accuracy + stable UX
+5. Data privacy?         → Zero-retention + not used for training + SOC 2
+
+NEXT-BEST-ACTIONS BY STAGE
+  Discovery  → 20-min walkthrough in their account
+  Eval       → 14-day pilot, 1 KPI
+  Close      → Security questionnaire + BI integration alignment
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+</code></pre>
+<h3 id="meddpicc-coaching-prompts"><a href="#meddpicc-coaching-prompts" class="anchor">#</a>MEDDPICC coaching prompts</h3>
+<p>For CSMs working a conversion conversation with a paid Mailchimp customer considering Klaviyo:</p>
+<ul>
+<li><strong>Missing M (Metrics):</strong> <em>&quot;What number on your dashboard would make you confident your marketing is working? Who asks you about that number?&quot;</em></li>
+<li><strong>Missing E (Economic Buyer):</strong> <em>&quot;If you switched to Klaviyo, who signs off on the $X increase in monthly cost? What would you need to tell them?&quot;</em></li>
+<li><strong>Weak C (Champion):</strong> <em>&quot;If we gave you a 14-day pilot with one specific goal, what would that goal be? Would you be willing to write up the result for your team?&quot;</em></li>
+<li><strong>Missing T (Trust bar):</strong> <em>&quot;Do you have any legal/IT constraints on AI with your customer data? Would a trust page and SOC 2 docs resolve that?&quot;</em></li>
+</ul>
+<hr>
+<h2 id="closing-the-unfair-advantage"><a href="#closing-the-unfair-advantage" class="anchor">#</a>Closing — The Unfair Advantage</h2>
+<p>Mailchimp Analytics AI has three structural advantages no competitor in the set has:</p>
+<ol>
+<li><strong>PLG distribution at 11M+ accounts.</strong> Klaviyo has 193K; Salesforce sells through field reps. Mailchimp can light up a third of all small-business marketing in North America on launch day.</li>
+<li><strong>The Intuit platform.</strong> No standalone competitor can tie marketing performance to financials, payroll, and tax data. This is a Q4 FY27 unlock (QBO Omni integration) that reframes the entire category.</li>
+<li><strong>The SMB voice of customer.</strong> The &quot;marketing specialist for free&quot; frame wasn&#39;t invented in a positioning workshop. It came from actual customers. You can&#39;t beat an insight that was handed to you by your market.</li>
+</ol>
+<p>The job now is to translate those advantages into crisp narrative, airtight trust, and relentless execution — starting May 11.</p>
+<hr>
+<p><em>Prepared using the GTM/PMM framework from the Competitive Intel report (Part 1), the <code>sales-pitch-story</code>, <code>ai-trust-messaging</code>, <code>ai-launch-archetype</code>, and <code>meddic-command-of-message</code> skills authored in ~/ai_workspace/pmm-skills/, and the Slack + VOC research archive at ~/Desktop/analytics-agent-research/.</em></p>
+<p><em>All quantitative claims reference the V1 Alpha and V2 Beta experiment readouts on file; all qualitative claims reference Alex Dao&#39;s research or production Langfuse traces. Any public use requires claim substantiation sign-off.</em></p>
+
+    <footer>
+      <p>Sources verified through April 23, 2026.<br>
+      Repo: <a href="https://github.com/deepakp1308/ai-pmm-intel">deepakp1308/ai-pmm-intel</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

@@ -1,67 +1,85 @@
 const fs = require('fs');
 const path = require('path');
 
-const MD_PATH = '/Users/dprabhakara/Desktop/analytics-agent-research/ai-pmm-competitive-intel.md';
-const OUT_PATH = '/Users/dprabhakara/ai_workspace/ai-pmm-intel-site/index.html';
+const SITE_DIR = '/Users/dprabhakara/ai_workspace/ai-pmm-intel-site';
+
+const PAGES = [
+  {
+    slug: 'competitive-intel',
+    tabLabel: 'Competitive Intel',
+    title: 'AI PMM Competitive Intelligence',
+    subtitle: 'A framework-driven benchmarking of QuickBooks, TurboTax, Klaviyo, and Salesforce',
+    kicker: 'Research Report',
+    mdPath: '/Users/dprabhakara/Desktop/analytics-agent-research/ai-pmm-competitive-intel.md',
+    outPath: path.join(SITE_DIR, 'index.html'),
+  },
+  {
+    slug: 'mailchimp-positioning',
+    tabLabel: 'Mailchimp Analytics AI Positioning',
+    title: 'Mailchimp Analytics AI — GTM & PMM Positioning',
+    subtitle: 'Applying the framework to our own newly-GA\'d Analytics Agent',
+    kicker: 'Positioning Plan',
+    mdPath: '/Users/dprabhakara/Desktop/analytics-agent-research/mailchimp-analytics-ai-positioning.md',
+    outPath: path.join(SITE_DIR, 'positioning/index.html'),
+  },
+];
 
 async function main() {
-const { marked } = require('/Users/dprabhakara/ai_workspace/ai-pmm-intel-site/node_modules/marked');
+  const { marked } = require(path.join(SITE_DIR, 'node_modules/marked'));
+  const slug = (s) => s.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
 
-// Configure marked to add anchor IDs to headings
-const renderer = new marked.Renderer();
-const slug = (s) => s.toLowerCase()
-  .replace(/[^\w\s-]/g, '')
-  .trim()
-  .replace(/\s+/g, '-');
+  for (const page of PAGES) {
+    const renderer = new marked.Renderer();
+    const tocEntries = [];
 
-const tocEntries = [];
-// marked v12 API: heading(text, level, raw)
-renderer.heading = (text, level, raw) => {
-  const plainText = String(raw || text).replace(/<[^>]+>/g, '');
-  const id = slug(plainText);
-  if (level <= 3) tocEntries.push({ depth: level, text: plainText, id });
-  return `<h${level} id="${id}"><a href="#${id}" class="anchor">#</a>${text}</h${level}>\n`;
-};
+    renderer.heading = (text, level, raw) => {
+      const plainText = String(raw || text).replace(/<[^>]+>/g, '');
+      const id = slug(plainText);
+      if (level <= 3) tocEntries.push({ depth: level, text: plainText, id });
+      return `<h${level} id="${id}"><a href="#${id}" class="anchor">#</a>${text}</h${level}>\n`;
+    };
 
-// marked v12 API: table(header, body) where both are pre-rendered HTML strings
-renderer.table = (header, body) => {
-  return `<div class="table-wrap"><table>\n<thead>${header}</thead>\n<tbody>${body}</tbody></table></div>\n`;
-};
+    renderer.table = (header, body) =>
+      `<div class="table-wrap"><table>\n<thead>${header}</thead>\n<tbody>${body}</tbody></table></div>\n`;
 
-marked.setOptions({ renderer, gfm: true, breaks: false });
+    marked.setOptions({ renderer, gfm: true, breaks: false });
 
-const md = fs.readFileSync(MD_PATH, 'utf-8');
-const body = marked.parse(md);
+    const md = fs.readFileSync(page.mdPath, 'utf-8');
+    const body = marked.parse(md);
 
-// Build sidebar TOC HTML
-const tocHtml = tocEntries.map(e => {
-  return `<a href="#${e.id}" class="toc-d${e.depth}">${e.text}</a>`;
-}).join('\n');
+    const tocHtml = tocEntries.map(e => `<a href="#${e.id}" class="toc-d${e.depth}">${e.text}</a>`).join('\n');
 
-const html = `<!doctype html>
+    // Top nav with proper relative hrefs per page
+    const topNav = PAGES.map(p => {
+      const active = p.slug === page.slug ? ' class="active"' : '';
+      let href;
+      if (p.slug === page.slug) {
+        href = '#';
+      } else if (page.slug === 'competitive-intel' && p.slug === 'mailchimp-positioning') {
+        href = 'positioning/';
+      } else if (page.slug === 'mailchimp-positioning' && p.slug === 'competitive-intel') {
+        href = '../';
+      } else {
+        href = '#';
+      }
+      return `      <a href="${href}"${active}>${p.tabLabel}</a>`;
+    }).join('\n');
+
+    const html = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI PMM Competitive Intel — Deepak Prabhakaran</title>
-<meta name="description" content="Framework-driven benchmarking of AI product marketing and go-to-market positioning at QuickBooks, TurboTax, Klaviyo, and Salesforce.">
+<title>${page.title} — Deepak Prabhakaran</title>
+<meta name="description" content="${page.subtitle}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #162251;
-    --navy-2: #1e3a6e;
-    --blue: #0070d2;
-    --blue-soft: #4472c4;
-    --teal: #00b9a9;
-    --pink: #f4809b;
-    --green: #1aab68;
-    --red: #d13438;
-    --bg: #f0f4f8;
-    --surface: #ffffff;
-    --text: #1a1f36;
-    --text-2: #6b7c93;
+    --navy: #162251; --navy-2: #1e3a6e; --blue: #0070d2; --blue-soft: #4472c4;
+    --teal: #00b9a9; --pink: #f4809b; --green: #1aab68; --red: #d13438;
+    --bg: #f0f4f8; --surface: #ffffff; --text: #1a1f36; --text-2: #6b7c93;
     --border: #e8edf5;
     --shadow: 0 1px 4px rgba(26,40,96,.08);
     --shadow-lg: 0 8px 24px rgba(26,40,96,.12);
@@ -71,98 +89,94 @@ const html = `<!doctype html>
   body {
     margin: 0;
     font: 15px/1.65 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-    color: var(--text);
-    background: var(--bg);
+    color: var(--text); background: var(--bg);
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Layout */
+  .topnav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--navy); color: #fff;
+    padding: 0 clamp(16px, 4vw, 40px);
+    display: flex; align-items: center; gap: 28px;
+    border-bottom: 3px solid var(--teal);
+    height: 54px; overflow-x: auto;
+  }
+  .topnav .brand {
+    font-weight: 700; font-size: 14px;
+    white-space: nowrap; padding-right: 16px;
+    border-right: 1px solid rgba(255,255,255,.15);
+    color: #fff;
+  }
+  .topnav a {
+    color: rgba(255,255,255,.72); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    padding: 18px 4px; white-space: nowrap;
+    border-bottom: 3px solid transparent; margin-bottom: -3px;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .topnav a:hover { color: #fff; }
+  .topnav a.active {
+    color: #fff; border-bottom-color: var(--teal);
+    font-weight: 600;
+  }
+
   .wrap {
     display: grid;
     grid-template-columns: 260px minmax(0, 1fr);
-    min-height: 100vh;
+    min-height: calc(100vh - 54px);
   }
   aside {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    background: var(--navy);
-    color: #fff;
-    padding: 28px 20px;
-    overflow-y: auto;
+    position: sticky; top: 54px;
+    height: calc(100vh - 54px);
+    background: #fff; border-right: 1px solid var(--border);
+    padding: 28px 20px; overflow-y: auto;
   }
-  aside .brand {
-    font-weight: 700;
-    font-size: 16px;
+  aside .sidebar-brand {
+    font-weight: 700; font-size: 13px; color: var(--navy);
     margin-bottom: 4px;
   }
-  aside .brand-sub {
-    color: rgba(255,255,255,.55);
-    font-size: 12px;
-    margin-bottom: 28px;
+  aside .sidebar-sub {
+    color: var(--text-2); font-size: 12px; margin-bottom: 20px;
   }
   aside nav { display: flex; flex-direction: column; gap: 2px; }
   aside nav a {
-    color: rgba(255,255,255,.82);
-    text-decoration: none;
-    font-size: 13px;
-    padding: 5px 10px;
-    border-radius: 6px;
-    line-height: 1.4;
-    border-left: 2px solid transparent;
+    color: var(--text); text-decoration: none;
+    font-size: 13px; padding: 5px 10px; border-radius: 6px;
+    line-height: 1.4; border-left: 2px solid transparent;
     transition: all .15s ease;
   }
-  aside nav a:hover { background: rgba(255,255,255,.08); color: #fff; }
-  aside nav a.toc-d1 { font-weight: 600; margin-top: 14px; color: #fff; }
-  aside nav a.toc-d2 { padding-left: 22px; }
-  aside nav a.toc-d3 { padding-left: 34px; font-size: 12px; color: rgba(255,255,255,.62); }
+  aside nav a:hover { background: var(--bg); color: var(--blue); border-left-color: var(--blue-soft); }
+  aside nav a.toc-d1 { font-weight: 600; margin-top: 10px; color: var(--navy); }
+  aside nav a.toc-d2 { padding-left: 22px; color: var(--navy-2); }
+  aside nav a.toc-d3 { padding-left: 34px; font-size: 12px; color: var(--text-2); }
 
   main {
     padding: 40px clamp(24px, 5vw, 80px);
-    max-width: 1040px;
-    width: 100%;
+    max-width: 1040px; width: 100%;
   }
 
-  /* Header banner */
   .hero {
     background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
-    color: #fff;
-    padding: 40px 36px;
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
+    color: #fff; padding: 40px 36px;
+    border-radius: 12px; box-shadow: var(--shadow-lg);
     margin-bottom: 40px;
   }
   .hero .kicker {
-    text-transform: uppercase;
-    letter-spacing: .12em;
-    font-size: 11px;
-    color: rgba(255,255,255,.7);
-    margin-bottom: 12px;
-    font-weight: 600;
+    text-transform: uppercase; letter-spacing: .12em;
+    font-size: 11px; color: rgba(255,255,255,.7);
+    margin-bottom: 12px; font-weight: 600;
   }
   .hero h1 {
-    font-size: clamp(26px, 3.5vw, 36px);
-    font-weight: 700;
-    margin: 0 0 10px 0;
-    line-height: 1.2;
-    color: #fff;
+    font-size: clamp(26px, 3.5vw, 36px); font-weight: 700;
+    margin: 0 0 10px 0; line-height: 1.2; color: #fff;
   }
-  .hero .sub {
-    color: rgba(255,255,255,.85);
-    font-size: 16px;
-    font-weight: 400;
-  }
+  .hero .sub { color: rgba(255,255,255,.85); font-size: 16px; }
   .hero .meta {
-    margin-top: 24px;
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-    font-size: 13px;
-    color: rgba(255,255,255,.7);
+    margin-top: 24px; display: flex; gap: 24px;
+    flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,.7);
   }
   .hero .meta span b { color: #fff; font-weight: 600; }
 
-  /* Typography for rendered markdown */
   main h1:not(.hero h1) {
     font-size: 28px; font-weight: 700; color: var(--navy);
     margin: 56px 0 20px 0; padding-bottom: 10px;
@@ -181,13 +195,9 @@ const html = `<!doctype html>
     margin: 20px 0 8px 0;
   }
   main .anchor {
-    color: var(--border);
-    text-decoration: none;
-    margin-right: 8px;
-    opacity: 0;
-    transition: opacity .15s;
-    font-weight: 400;
-    font-size: .8em;
+    color: var(--border); text-decoration: none;
+    margin-right: 8px; opacity: 0;
+    transition: opacity .15s; font-weight: 400; font-size: .8em;
   }
   main h1:hover .anchor, main h2:hover .anchor, main h3:hover .anchor { opacity: 1; }
 
@@ -197,50 +207,37 @@ const html = `<!doctype html>
   main a { color: var(--blue); text-decoration: none; }
   main a:hover { text-decoration: underline; }
 
-  /* Lists */
   main ul, main ol { padding-left: 24px; margin: 0 0 16px 0; }
   main li { margin-bottom: 6px; }
   main li::marker { color: var(--blue-soft); }
 
-  /* Blockquotes (verbatim quotes) */
   main blockquote {
     border-left: 4px solid var(--teal);
     background: var(--surface);
-    margin: 14px 0;
-    padding: 14px 20px;
-    color: var(--navy-2);
-    font-style: italic;
+    margin: 14px 0; padding: 14px 20px;
+    color: var(--navy-2); font-style: italic;
     border-radius: 0 8px 8px 0;
     box-shadow: var(--shadow);
   }
   main blockquote p { margin: 0; }
 
-  /* Inline code */
   main code {
     font: 13px/1.4 'JetBrains Mono', Menlo, monospace;
-    background: #eef2f9;
-    color: var(--navy);
-    padding: 2px 6px;
-    border-radius: 4px;
+    background: #eef2f9; color: var(--navy);
+    padding: 2px 6px; border-radius: 4px;
   }
   main pre {
-    background: var(--navy);
-    color: #d8e2f7;
-    padding: 16px 20px;
-    border-radius: 8px;
+    background: var(--navy); color: #d8e2f7;
+    padding: 16px 20px; border-radius: 8px;
     overflow-x: auto;
-    font: 13px/1.5 'JetBrains Mono', Menlo, monospace;
+    font: 12px/1.5 'JetBrains Mono', Menlo, monospace;
   }
-  main pre code { background: transparent; color: inherit; padding: 0; }
+  main pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
 
-  /* Tables */
   .table-wrap {
-    overflow-x: auto;
-    margin: 16px 0 28px 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
+    overflow-x: auto; margin: 16px 0 28px 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; box-shadow: var(--shadow);
   }
   main table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   main thead tr { background: var(--navy); }
@@ -250,48 +247,34 @@ const html = `<!doctype html>
     border-bottom: 1px solid var(--navy-2);
   }
   main td {
-    padding: 11px 14px;
-    border-bottom: 1px solid var(--border);
+    padding: 11px 14px; border-bottom: 1px solid var(--border);
     vertical-align: top;
   }
   main tbody tr:nth-child(even) { background: #f7fafc; }
   main tbody tr:hover { background: #eef4fb; }
   main td:first-child { font-weight: 500; color: var(--navy); }
 
-  /* HR */
-  main hr {
-    border: 0;
-    border-top: 1px solid var(--border);
-    margin: 40px 0;
-  }
+  main hr { border: 0; border-top: 1px solid var(--border); margin: 40px 0; }
 
-  /* Footer */
   footer {
-    margin: 80px 0 40px 0;
-    padding: 24px 0 0 0;
+    margin: 80px 0 40px 0; padding: 24px 0 0 0;
     border-top: 1px solid var(--border);
-    color: var(--text-2);
-    font-size: 12px;
+    color: var(--text-2); font-size: 12px;
   }
   footer a { color: var(--blue); }
 
-  /* Mobile */
   @media (max-width: 900px) {
     .wrap { grid-template-columns: 1fr; }
     aside {
-      position: relative;
-      height: auto;
-      padding: 20px;
+      position: relative; top: auto; height: auto;
+      padding: 16px 20px; max-height: 240px;
     }
-    aside nav { flex-direction: row; flex-wrap: wrap; gap: 8px; max-height: 180px; overflow-y: auto; }
-    aside nav a.toc-d3 { display: none; }
     main { padding: 24px 20px; }
     .hero { padding: 28px 24px; }
   }
 
-  /* Print */
   @media print {
-    aside { display: none; }
+    .topnav, aside { display: none; }
     .wrap { grid-template-columns: 1fr; }
     .hero { background: var(--navy) !important; -webkit-print-color-adjust: exact; }
     main { padding: 0; }
@@ -299,19 +282,23 @@ const html = `<!doctype html>
 </style>
 </head>
 <body>
+<nav class="topnav">
+  <div class="brand">AI PMM · Deepak Prabhakaran</div>
+${topNav}
+</nav>
 <div class="wrap">
   <aside>
-    <div class="brand">AI PMM Competitive Intel</div>
-    <div class="brand-sub">Deepak Prabhakaran · Apr 2026</div>
+    <div class="sidebar-brand">${page.tabLabel}</div>
+    <div class="sidebar-sub">Apr 2026 · ${tocEntries.length} sections</div>
     <nav>
 ${tocHtml}
     </nav>
   </aside>
   <main>
     <div class="hero">
-      <div class="kicker">Research Report</div>
-      <h1>AI Product Marketing &amp; GTM Competitive Intelligence</h1>
-      <div class="sub">A framework-driven benchmarking of QuickBooks, TurboTax, Klaviyo, and Salesforce</div>
+      <div class="kicker">${page.kicker}</div>
+      <h1>${page.title}</h1>
+      <div class="sub">${page.subtitle}</div>
       <div class="meta">
         <span><b>Prepared by:</b> Deepak Prabhakaran</span>
         <span><b>Team:</b> Mailchimp Reporting &amp; Analytics</span>
@@ -320,8 +307,8 @@ ${tocHtml}
     </div>
 ${body}
     <footer>
-      <p>Sources verified through April 23, 2026 — see Appendix for primary URLs.<br>
-      Word version: <code>AI-PMM-Competitive-Intel.docx</code> &middot; Repo: <a href="https://github.com/deepakp1308/ai-pmm-intel">deepakp1308/ai-pmm-intel</a></p>
+      <p>Sources verified through April 23, 2026.<br>
+      Repo: <a href="https://github.com/deepakp1308/ai-pmm-intel">deepakp1308/ai-pmm-intel</a></p>
     </footer>
   </main>
 </div>
@@ -329,8 +316,11 @@ ${body}
 </html>
 `;
 
-fs.writeFileSync(OUT_PATH, html);
-console.log('Wrote', OUT_PATH, '(' + Math.round(fs.statSync(OUT_PATH).size / 1024) + ' KB)');
-console.log('TOC entries:', tocEntries.length);
+    fs.mkdirSync(path.dirname(page.outPath), { recursive: true });
+    fs.writeFileSync(page.outPath, html);
+    const kb = Math.round(fs.statSync(page.outPath).size / 1024);
+    console.log(`[${page.slug}] wrote ${page.outPath} (${kb} KB, ${tocEntries.length} TOC entries)`);
+  }
 }
+
 main().catch(e => { console.error(e); process.exit(1); });
