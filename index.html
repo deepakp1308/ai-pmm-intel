@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI PMM Competitive Intel — Deepak Prabhakaran</title>
+<meta name="description" content="Framework-driven benchmarking of AI product marketing and go-to-market positioning at QuickBooks, TurboTax, Klaviyo, and Salesforce.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #162251;
+    --navy-2: #1e3a6e;
+    --blue: #0070d2;
+    --blue-soft: #4472c4;
+    --teal: #00b9a9;
+    --pink: #f4809b;
+    --green: #1aab68;
+    --red: #d13438;
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --text: #1a1f36;
+    --text-2: #6b7c93;
+    --border: #e8edf5;
+    --shadow: 0 1px 4px rgba(26,40,96,.08);
+    --shadow-lg: 0 8px 24px rgba(26,40,96,.12);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font: 15px/1.65 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Layout */
+  .wrap {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+  aside {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: var(--navy);
+    color: #fff;
+    padding: 28px 20px;
+    overflow-y: auto;
+  }
+  aside .brand {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  aside .brand-sub {
+    color: rgba(255,255,255,.55);
+    font-size: 12px;
+    margin-bottom: 28px;
+  }
+  aside nav { display: flex; flex-direction: column; gap: 2px; }
+  aside nav a {
+    color: rgba(255,255,255,.82);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+    transition: all .15s ease;
+  }
+  aside nav a:hover { background: rgba(255,255,255,.08); color: #fff; }
+  aside nav a.toc-d1 { font-weight: 600; margin-top: 14px; color: #fff; }
+  aside nav a.toc-d2 { padding-left: 22px; }
+  aside nav a.toc-d3 { padding-left: 34px; font-size: 12px; color: rgba(255,255,255,.62); }
+
+  main {
+    padding: 40px clamp(24px, 5vw, 80px);
+    max-width: 1040px;
+    width: 100%;
+  }
+
+  /* Header banner */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+    color: #fff;
+    padding: 40px 36px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 40px;
+  }
+  .hero .kicker {
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-size: 11px;
+    color: rgba(255,255,255,.7);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .hero h1 {
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    line-height: 1.2;
+    color: #fff;
+  }
+  .hero .sub {
+    color: rgba(255,255,255,.85);
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .hero .meta {
+    margin-top: 24px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: rgba(255,255,255,.7);
+  }
+  .hero .meta span b { color: #fff; font-weight: 600; }
+
+  /* Typography for rendered markdown */
+  main h1:not(.hero h1) {
+    font-size: 28px; font-weight: 700; color: var(--navy);
+    margin: 56px 0 20px 0; padding-bottom: 10px;
+    border-bottom: 2px solid var(--navy);
+  }
+  main h2 {
+    font-size: 22px; font-weight: 600; color: var(--navy-2);
+    margin: 44px 0 16px 0;
+  }
+  main h3 {
+    font-size: 17px; font-weight: 600; color: var(--blue);
+    margin: 30px 0 10px 0;
+  }
+  main h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 20px 0 8px 0;
+  }
+  main .anchor {
+    color: var(--border);
+    text-decoration: none;
+    margin-right: 8px;
+    opacity: 0;
+    transition: opacity .15s;
+    font-weight: 400;
+    font-size: .8em;
+  }
+  main h1:hover .anchor, main h2:hover .anchor, main h3:hover .anchor { opacity: 1; }
+
+  main p { margin: 0 0 14px 0; color: var(--text); }
+  main strong { font-weight: 600; color: var(--navy); }
+  main em { font-style: italic; color: var(--navy-2); }
+  main a { color: var(--blue); text-decoration: none; }
+  main a:hover { text-decoration: underline; }
+
+  /* Lists */
+  main ul, main ol { padding-left: 24px; margin: 0 0 16px 0; }
+  main li { margin-bottom: 6px; }
+  main li::marker { color: var(--blue-soft); }
+
+  /* Blockquotes (verbatim quotes) */
+  main blockquote {
+    border-left: 4px solid var(--teal);
+    background: var(--surface);
+    margin: 14px 0;
+    padding: 14px 20px;
+    color: var(--navy-2);
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+    box-shadow: var(--shadow);
+  }
+  main blockquote p { margin: 0; }
+
+  /* Inline code */
+  main code {
+    font: 13px/1.4 'JetBrains Mono', Menlo, monospace;
+    background: #eef2f9;
+    color: var(--navy);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  main pre {
+    background: var(--navy);
+    color: #d8e2f7;
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font: 13px/1.5 'JetBrains Mono', Menlo, monospace;
+  }
+  main pre code { background: transparent; color: inherit; padding: 0; }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 16px 0 28px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+  }
+  main table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  main thead tr { background: var(--navy); }
+  main th {
+    color: #fff; font-weight: 600;
+    text-align: left; padding: 12px 14px;
+    border-bottom: 1px solid var(--navy-2);
+  }
+  main td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  main tbody tr:nth-child(even) { background: #f7fafc; }
+  main tbody tr:hover { background: #eef4fb; }
+  main td:first-child { font-weight: 500; color: var(--navy); }
+
+  /* HR */
+  main hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* Footer */
+  footer {
+    margin: 80px 0 40px 0;
+    padding: 24px 0 0 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-2);
+    font-size: 12px;
+  }
+  footer a { color: var(--blue); }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    .wrap { grid-template-columns: 1fr; }
+    aside {
+      position: relative;
+      height: auto;
+      padding: 20px;
+    }
+    aside nav { flex-direction: row; flex-wrap: wrap; gap: 8px; max-height: 180px; overflow-y: auto; }
+    aside nav a.toc-d3 { display: none; }
+    main { padding: 24px 20px; }
+    .hero { padding: 28px 24px; }
+  }
+
+  /* Print */
+  @media print {
+    aside { display: none; }
+    .wrap { grid-template-columns: 1fr; }
+    .hero { background: var(--navy) !important; -webkit-print-color-adjust: exact; }
+    main { padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside>
+    <div class="brand">AI PMM Competitive Intel</div>
+    <div class="brand-sub">Deepak Prabhakaran · Apr 2026</div>
+    <nav>
+<a href="#ai-product-marketing-gtm-competitive-intelligence" class="toc-d1">AI Product Marketing  GTM Competitive Intelligence</a>
+<a href="#a-framework-driven-benchmarking-of-quickbooks-turbotax-klaviyo-and-salesforce" class="toc-d2">A Framework-Driven Benchmarking of QuickBooks, TurboTax, Klaviyo, and Salesforce</a>
+<a href="#executive-summary" class="toc-d2">Executive Summary</a>
+<a href="#part-1-the-gtmpmm-evaluation-framework-for-ai-features" class="toc-d2">Part 1 — The GTM/PMM Evaluation Framework for AI Features</a>
+<a href="#the-eleven-dimensions" class="toc-d3">The Eleven Dimensions</a>
+<a href="#bonus-framing-april-dunfords-sales-pitch-story-test" class="toc-d3">Bonus Framing — April Dunford's Sales Pitch Story Test</a>
+<a href="#bonus-framing-meddic-command-of-the-message-pressure-test" class="toc-d3">Bonus Framing — MEDDIC + Command of the Message Pressure Test</a>
+<a href="#part-2-company-deep-dives" class="toc-d2">Part 2 — Company Deep Dives</a>
+<a href="#21-quickbooks-intuit" class="toc-d3">2.1 — QuickBooks (Intuit)</a>
+<a href="#22-turbotax-intuit" class="toc-d3">2.2 — TurboTax (Intuit)</a>
+<a href="#23-klaviyo" class="toc-d3">2.3 — Klaviyo</a>
+<a href="#24-salesforce" class="toc-d3">2.4 — Salesforce</a>
+<a href="#part-3-comparative-synthesis" class="toc-d2">Part 3 — Comparative Synthesis</a>
+<a href="#31-cross-company-scorecard-framework-dimensions" class="toc-d3">3.1 — Cross-Company Scorecard (Framework Dimensions)</a>
+<a href="#32-common-themes-across-all-four" class="toc-d3">3.2 — Common Themes Across All Four</a>
+<a href="#33-unique-themes-what-each-company-does-that-others-dont" class="toc-d3">3.3 — Unique Themes (What Each Company Does That Others Don't)</a>
+<a href="#34-archetype-mapping" class="toc-d3">3.4 — Archetype Mapping</a>
+<a href="#part-4-implications-for-mailchimp" class="toc-d2">Part 4 — Implications for Mailchimp</a>
+<a href="#move-1-own-a-single-ai-umbrella-brand" class="toc-d3">Move 1 — Own a single AI umbrella brand</a>
+<a href="#move-2-productize-governance-not-just-compliance" class="toc-d3">Move 2 — Productize governance, not just compliance</a>
+<a href="#move-3-attack-the-segment-klaviyo-is-abandoning" class="toc-d3">Move 3 — Attack the segment Klaviyo is abandoning</a>
+<a href="#bonus-move-4-borrow-the-best-tactics" class="toc-d3">Bonus Move 4 — Borrow the best tactics</a>
+<a href="#part-5-appendix-primary-sources" class="toc-d2">Part 5 — Appendix: Primary Sources</a>
+<a href="#quickbooks" class="toc-d3">QuickBooks</a>
+<a href="#turbotax" class="toc-d3">TurboTax</a>
+<a href="#klaviyo" class="toc-d3">Klaviyo</a>
+<a href="#salesforce" class="toc-d3">Salesforce</a>
+    </nav>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">Research Report</div>
+      <h1>AI Product Marketing &amp; GTM Competitive Intelligence</h1>
+      <div class="sub">A framework-driven benchmarking of QuickBooks, TurboTax, Klaviyo, and Salesforce</div>
+      <div class="meta">
+        <span><b>Prepared by:</b> Deepak Prabhakaran</span>
+        <span><b>Team:</b> Mailchimp Reporting &amp; Analytics</span>
+        <span><b>Date:</b> April 23, 2026</span>
+      </div>
+    </div>
+<h1 id="ai-product-marketing-gtm-competitive-intelligence"><a href="#ai-product-marketing-gtm-competitive-intelligence" class="anchor">#</a>AI Product Marketing &amp; GTM Competitive Intelligence</h1>
+<h2 id="a-framework-driven-benchmarking-of-quickbooks-turbotax-klaviyo-and-salesforce"><a href="#a-framework-driven-benchmarking-of-quickbooks-turbotax-klaviyo-and-salesforce" class="anchor">#</a>A Framework-Driven Benchmarking of QuickBooks, TurboTax, Klaviyo, and Salesforce</h2>
+<p><strong>Prepared for:</strong> Deepak Prabhakaran, Mailchimp R&amp;A
+<strong>Date:</strong> April 23, 2026
+<strong>Scope:</strong> External market-facing AI feature positioning for four companies, evaluated against a consistent GTM/PMM framework, with cross-company synthesis and implications for Mailchimp.</p>
+<hr>
+<h2 id="executive-summary"><a href="#executive-summary" class="anchor">#</a>Executive Summary</h2>
+<p>This document does three things. <strong>First</strong>, it establishes an eleven-dimension framework for evaluating any AI product&#39;s go-to-market and product-marketing strategy. <strong>Second</strong>, it applies that framework uniformly to four companies — two internal Intuit sister brands (QuickBooks, TurboTax), one direct competitor (Klaviyo), and the enterprise AI category leader (Salesforce). <strong>Third</strong>, it surfaces common themes, unique themes, and the implications for Mailchimp&#39;s own AI positioning work.</p>
+<p><strong>The five clearest findings:</strong></p>
+<ol>
+<li><strong>No company is leading with &quot;AI&quot; in their hero copy anymore.</strong> All four lead with outcome or metaphor language (&quot;virtual team,&quot; &quot;drama-free,&quot; &quot;autonomous B2C CRM,&quot; &quot;agentic enterprise&quot;). The AI is the engine, not the brand.</li>
+<li><strong>Three launch archetypes are in use simultaneously.</strong> Salesforce and QuickBooks both run <strong>Platform-depth</strong>; Klaviyo runs <strong>Platform-depth + Category-creation</strong>; TurboTax uses <strong>Platform-depth + Safety-first veneer</strong>. <strong>Democratize-scale</strong> (the OpenAI/ChatGPT pattern) is absent among all four — an interesting hole.</li>
+<li><strong>Proof-and-trust is where most narratives fail.</strong> Three of four companies lack a named AI-specific guarantee or certification. Salesforce&#39;s Einstein Trust Layer is the strongest trust artifact in the set. QuickBooks, TurboTax, and Klaviyo all rely on generic SOC 2 / PCI / accuracy claims that don&#39;t actually address AI-specific risk (hallucination, training data, model drift).</li>
+<li><strong>Pricing is the most volatile frontier.</strong> Salesforce changed its commercial model three times in 18 months. Klaviyo&#39;s active-profile billing is driving merchant backlash and a growth deceleration from 32% to ~22% in 2026. QuickBooks raised its Plus SKU 64% from 2020 to 2025 and ties AI capabilities to tier upgrades. TurboTax bundles AI into every SKU — no premium.</li>
+<li><strong>Customer proof with hard numbers wins.</strong> Salesforce&#39;s &quot;70% deflection at 1-800Accountant&quot; and &quot;213% ROI at Wiley&quot; are the strongest external proof points; Klaviyo&#39;s &quot;12.4% of attributed revenue in 90 days&quot; and &quot;53% HoH growth&quot; are strong but lower-tier; QuickBooks leans on aggregate surveys (&quot;45% save 12 hours/month&quot;) rather than named stories; TurboTax uses composite personas in ads, not B2B-style case studies.</li>
+</ol>
+<hr>
+<h2 id="part-1-the-gtmpmm-evaluation-framework-for-ai-features"><a href="#part-1-the-gtmpmm-evaluation-framework-for-ai-features" class="anchor">#</a>Part 1 — The GTM/PMM Evaluation Framework for AI Features</h2>
+<p>A useful framework answers the questions a senior PM or CMO would ask in a product marketing review. The following eleven dimensions were applied uniformly to each of the four companies in this study.</p>
+<h3 id="the-eleven-dimensions"><a href="#the-eleven-dimensions" class="anchor">#</a>The Eleven Dimensions</h3>
+<p><strong>1. Named AI Products / Features.</strong>
+What are the actual product names the market sees? Which features are bundled together under what brand? Naming consistency is itself a PMM signal — scattered names suggest internal disagreement or strategy drift.</p>
+<p><strong>2. ICP &amp; Segmentation.</strong>
+Who specifically is the target buyer? What firmographics, titles, company size? Is there a sharp primary ICP or is the brand trying to be everything to everyone? Multi-tier ICPs (SMB owner + bookkeeper, for instance) require two distinct narratives.</p>
+<p><strong>3. Problem Statement.</strong>
+What pain is articulated in the customer&#39;s language? Is it quantified? Does the brand lead with pain or does it assume the pain and jump to solution? A strong problem statement is specific, quantified, and stated in the buyer&#39;s vocabulary.</p>
+<p><strong>4. Value Proposition.</strong>
+The headline claim on the homepage hero and the core tagline. Is it outcome-framed or capability-framed? Is it defensible? Is it differentiated?</p>
+<p><strong>5. Solution Framing.</strong>
+How does the brand describe how the AI works? Options include capability-forward (&quot;AI-powered&quot;), outcome-forward (&quot;get paid faster&quot;), platform-forward (&quot;system of intelligence&quot;), metaphor-forward (&quot;virtual team&quot;), or category-forward (&quot;autonomous CRM&quot;). The best narratives use outcome on the surface and platform underneath.</p>
+<p><strong>6. Differentiation.</strong>
+How does the brand position versus named competitors in the category, versus adjacent categories, and versus horizontal AI (ChatGPT, Claude, Copilot)? The horizontal-AI defense is the newest requirement and the one most commonly missing.</p>
+<p><strong>7. Proof &amp; Trust.</strong>
+Named customer stories with quantified outcomes; safety/security/compliance messaging; AI-specific certifications (ISO/IEC 42001, NIST AI RMF, AIUC-1); model-card-level transparency. This is where most AI marketing falls apart — generic SOC 2 is no longer enough.</p>
+<p><strong>8. GTM Motion &amp; Pricing.</strong>
+Channel mix (product-led growth, partner/channel, field sales, events, TV), pricing model for AI (bundled, premium SKU, per-seat premium, usage-based/tokens/credits, outcome-based/per-conversation, hybrid), and how the commercial model has evolved.</p>
+<p><strong>9. Signature Marketing Moments.</strong>
+Two to three notable campaigns, keynotes, or launches in the last twelve months that define the brand&#39;s AI narrative. These are the artifacts the market and analysts cite.</p>
+<p><strong>10. Launch Archetype.</strong>
+Classify the launch pattern as one of three archetypes defined in the <code>ai-launch-archetype</code> skill:</p>
+<ul>
+<li><strong>Safety-First (Anthropic pattern)</strong> — trust-driven, measured, eval-forward. Lead with limitations and research. Enterprise + regulated industries.</li>
+<li><strong>Democratize-Scale (OpenAI pattern)</strong> — access-framing, viral artifacts, volume as proof, roadmap drumbeat. Consumer / prosumer.</li>
+<li><strong>Platform-Depth (Google / Microsoft / Salesforce pattern)</strong> — continuity with existing platform, integration proof, ROI framing, named-customer proof. Enterprise-embedded.</li>
+</ul>
+<p><strong>11. Strengths &amp; Gaps.</strong>
+What works; where the narrative has holes. A balanced view keeps the analysis honest.</p>
+<h3 id="bonus-framing-april-dunfords-sales-pitch-story-test"><a href="#bonus-framing-april-dunfords-sales-pitch-story-test" class="anchor">#</a>Bonus Framing — April Dunford&#39;s Sales Pitch Story Test</h3>
+<p>Any AI positioning can be pressure-tested against five questions derived from April Dunford&#39;s 2023 Sales Pitch framework:</p>
+<ul>
+<li><strong>Insight:</strong> Is there a non-obvious market truth that reframes how the buyer should evaluate options?</li>
+<li><strong>Alternatives:</strong> Does the narrative fairly steelman the alternatives (including &quot;do nothing&quot; and horizontal AI)?</li>
+<li><strong>Tradeoffs:</strong> Does the brand name what it chose NOT to do (features they explicitly avoided)?</li>
+<li><strong>Value:</strong> Are the three-to-five concrete outcomes quantified?</li>
+<li><strong>Proof:</strong> For each value, is there a named customer story with a number?</li>
+</ul>
+<p>Where a company scores below three-out-of-five on this test, the narrative is likely to lose to a sharper competitor.</p>
+<h3 id="bonus-framing-meddic-command-of-the-message-pressure-test"><a href="#bonus-framing-meddic-command-of-the-message-pressure-test" class="anchor">#</a>Bonus Framing — MEDDIC + Command of the Message Pressure Test</h3>
+<p>For enterprise AI deals (Salesforce territory), the narrative is pressure-tested by asking: do the marketing assets give sales reps the weapons they need to win on MEDDIC criteria?</p>
+<ul>
+<li><strong>Metrics:</strong> Are outcome numbers specific enough for a champion to build an ROI model?</li>
+<li><strong>Economic Buyer:</strong> Is there value framing targeted at the C-suite (not the end user)?</li>
+<li><strong>Decision Criteria:</strong> Are AI-specific evaluation criteria addressed (accuracy, latency, data handling, eval methodology)?</li>
+<li><strong>Paper Process:</strong> Is procurement / security / AI-governance friction reduced by existing artifacts (trust page, AIUC-1, SOC 2)?</li>
+</ul>
+<p>Salesforce is the only company in this study that meaningfully arms its sales motion on all four.</p>
+<hr>
+<h2 id="part-2-company-deep-dives"><a href="#part-2-company-deep-dives" class="anchor">#</a>Part 2 — Company Deep Dives</h2>
+<p>Each company is analyzed against the eleven-dimension framework. Findings are drawn from primary sources (homepage copy, press releases, investor materials, keynotes, analyst coverage, and ads in the public domain).</p>
+<h3 id="21-quickbooks-intuit"><a href="#21-quickbooks-intuit" class="anchor">#</a>2.1 — QuickBooks (Intuit)</h3>
+<p><strong>Named AI Products.</strong> Two umbrella brands: <em>Intuit Assist</em> (original, Sept 2023) and <em>Intuit Intelligence</em> (new top-level, Oct 2025). Beneath them sits a &quot;virtual team of AI agents&quot; including Accounting AI / Agent, Payments AI / Agent, Customer AI / Agent, Sales Tax AI / Agent (beta), Finance AI / Agent (Advanced SKU only), Payroll AI / Agent, Project Management AI / Agent (beta), Business Tax AI (beta), Marketing Agent (coming), Intuit Intelligence Chat (coming), Bank Feed AI. Naming is <strong>inconsistent</strong> — customer-facing pages use &quot;X AI&quot; while press/investor language uses &quot;X Agent.&quot; This is a live branding transition.</p>
+<p><strong>ICP &amp; Segmentation.</strong> Multi-persona: (1) primary is the <strong>SMB owner-operator</strong> (1–25 employees) — the hero imagery and platform-page copy target the non-accountant founder; (2) secondary is the <strong>bookkeeper/accountant</strong> addressed via Firm of the Future and Intuit Accountant Suite; (3) emerging is <strong>mid-market</strong> via Intuit Enterprise Suite, average contract value $27,000, 40% YoY revenue growth.</p>
+<p><strong>Problem Statement.</strong> QuickBooks does NOT lead with a sharp problem frame. The hero is benefit-led (&quot;Make the most of every minute&quot;). Pain is inferred through customer quotes (&quot;I need more time to invest back into my business&quot;) rather than stated crisply. <strong>This is a gap</strong> versus competitors like Xero (JAX) and FreshBooks which lead with pain.</p>
+<p><strong>Value Propositions (verbatim).</strong></p>
+<ul>
+<li><em>&quot;Make the most of every minute with Intuit AI&quot;</em></li>
+<li><em>&quot;Automation where it counts. Human when it matters.&quot;</em></li>
+<li><em>&quot;Your new generative AI-powered financial assistant&quot;</em></li>
+<li><em>&quot;AI that takes your business further, faster&quot;</em></li>
+</ul>
+<p>Sub-taglines per agent: <em>&quot;Count on accuracy&quot;</em> (Accounting), <em>&quot;Accelerate your payments&quot;</em> (Payments), <em>&quot;Surface more leads&quot;</em> (Customer), <em>&quot;Stay prepared financially&quot;</em> (Finance).</p>
+<p><strong>Solution Framing.</strong> Hybrid — capability-first hero, outcome-anchored sub-copy (<em>&quot;get paid 5 days faster,&quot;</em> <em>&quot;77% more accurate,&quot;</em> <em>&quot;12 hours saved monthly&quot;</em>). The <strong>&quot;virtual team&quot; metaphor</strong> is the load-bearing frame — accessible and non-technical. Platform framing dominates: <em>&quot;system of intelligence,&quot;</em> <em>&quot;all-in-one platform.&quot;</em> Human-in-the-loop guardrail language is prominent (<em>&quot;You are always in control&quot;</em>).</p>
+<p><strong>Differentiation.</strong> Vs. Xero: depth of specialization vs. JAX&#39;s chat-first superagent. Vs. FreshBooks: ignored (different segment). Vs. NetSuite: <em>&quot;a powerful alternative to costly, complex, and slow-to-implement legacy systems&quot;</em> — pointed at multi-month implementation reputations (QBO claims 95% of customers onboarded in under 30 days). Vs. horizontal AI: the counter is implicit — <em>&quot;continuously learns your business,&quot;</em> &quot;ledger depth.&quot; ChatGPT is not named.</p>
+<p><strong>Proof &amp; Trust.</strong> Named customers: Kurtis Graham (COSIGN Enterprises), Steven F. (ADA Technologies), Ryan Handel (FIXE — <em>&quot;10 to 15 hours a month per account manager&quot;</em>), Caleb McDaniels (Rhodes Companies). Aggregate survey metrics: <em>&quot;78% of customers say Intuit AI makes it easier to run their business&quot;</em>; <em>&quot;45% save 12 hours each month on bookkeeping&quot;</em>; <em>&quot;paid an average of 5 days faster&quot;</em>. Trust stack: SOC 2 Type II, PCI DSS, AES-256, MFA. <strong>Critical gap: no AI-specific certification</strong> (no NIST AI RMF, no ISO/IEC 42001, no AIUC-1) referenced publicly. No Gartner MQ / Forrester Wave placement confirmed for QBO AI as of April 2026.</p>
+<p><strong>GTM Motion &amp; Pricing.</strong> Channel mix: ProAdvisor program (the organic moat), Intuit Connect event, Investor Day, digital, Firm of the Future content hub. <strong>No Super Bowl spot for QBO since 2022</strong> — the Super Bowl LX 2026 investment went to TurboTax, not QBO AI. Pricing: bundled into SKUs with AI capabilities as tier-separators. Simple Start $38/mo → Plus $115/mo (the &quot;AI unlock&quot; tier) → Advanced $275/mo (Finance Agent + Project Mgmt). Plus rose 64% from 2020 to 2025; Advanced rose 83%.</p>
+<p><strong>Signature Moments.</strong> (1) Investor Day 2025 unveiling &quot;Intuit Intelligence&quot;; (2) July 1, 2025 &quot;Virtual Team of AI Agents&quot; GA launch (Goodarzi: <em>&quot;By far, this is the most significant launch we&#39;ve ever had in our history&quot;</em>); (3) Intuit Connect 2025 with Balazs&#39;s framing <em>&quot;We&#39;re transforming from a system of record into a system of intelligence.&quot;</em></p>
+<p><strong>Launch Archetype.</strong> <strong>Platform-depth with Safety-first reassurance.</strong> Depth of financial-data integration is the primary moat (<em>&quot;system of intelligence,&quot;</em> <em>&quot;continuously learns&quot;</em>). The &quot;human in the loop&quot; ProAdvisor rails and <em>&quot;reassurance of a human&quot;</em> language layer on a safety-first overlay without making safety the hero.</p>
+<p><strong>Strengths.</strong> &quot;Virtual team&quot; metaphor is sticky and non-technical. Outcome-quantified sub-copy gives the narrative teeth. AI pricing gating ties features to revenue. Ecosystem leverage (Mailchimp, Credit Karma, TurboTax) gives structural credibility.</p>
+<p><strong>Gaps.</strong> Branding drift across &quot;Intuit Assist / Intuit AI / Intuit Intelligence / virtual team / X Agent / X AI.&quot; No sharp problem statement in hero copy. <strong>No AI-specific trust certification</strong>. Customer story bench is thin (fewer than 10 named AI-specific stories publicly). No QBO Super Bowl moment since 2022. ChatGPT positioning is implicit. Finance Agent — the most analytically differentiated capability — is gated to $275/mo Advanced tier, limiting exposure.</p>
+<hr>
+<h3 id="22-turbotax-intuit"><a href="#22-turbotax-intuit" class="anchor">#</a>2.2 — TurboTax (Intuit)</h3>
+<p><strong>Named AI Products.</strong> <em>Intuit Assist</em> (parent gen-AI), <em>AI Concierge</em> (expert matcher), <em>Outcome Maximization Assistant</em> (deduction scanner), <em>Cost Basis Adjustment Assistant</em> (&quot;50 clicks and $12K median income reduction saved&quot;), <em>Tax Assistant</em> (in Credit Karma, year-round readiness — claims 80% of taxes ready pre-season), <em>Refund Assistant</em> (post-refund recommendations), <em>Document AI / Autofill</em> (powered by Google Cloud Document AI + Gemini, covers &quot;90% of the most commonly used tax forms&quot;), <em>GenOS</em> (Intuit&#39;s proprietary gen-AI operating system, investor-facing).</p>
+<p><strong>ICP &amp; Segmentation.</strong> Three tiers, simplified for TY2025: <strong>DIY filers</strong> (Free Edition / DIY Deluxe / Premium), <strong>Assisted</strong> (Expert Assist Basic/Deluxe/Premium), <strong>Done-for-you</strong> (Expert Full Service), plus a Pro/SMB tier (Expert 365 Business / Pro Tax). The <strong>dominant AI-marketing target is the &quot;accountant switcher&quot;</strong> — filers who used a local CPA last year and whom TurboTax is poaching via the Beat Your Price Offer (minimum 10% off prior-year fees).</p>
+<p><strong>Problem Statement (verbatim).</strong></p>
+<ul>
+<li><em>&quot;Tax time can be confusing as filers sort through ever-changing tax laws and documentation.&quot;</em></li>
+<li><em>&quot;The last thing people like to worry about is their taxes.&quot;</em></li>
+<li>Notarainni (EVP/GM Consumer Group): <em>&quot;Trust is a local commodity, and we are stripping away every layer of friction that stands between a customer and their max refund.&quot;</em></li>
+<li><em>&quot;We are automating the tedium out of finances, empowering consumers to spend less time wondering, worrying or doing, and more time confidently living their best lives.&quot;</em></li>
+</ul>
+<p>Framing is <strong>emotional</strong> (anxiety, tedium, worry) not technical. This is sharper than QuickBooks&#39; hero.</p>
+<p><strong>Value Propositions (verbatim).</strong></p>
+<ul>
+<li><em>&quot;Get your best tax outcome, with expert help or on your own.&quot;</em></li>
+<li><em>&quot;We make it fast and easy to get your taxes done 100% right, guaranteed.&quot;</em></li>
+<li><em>&quot;Taxes done 100% right, however you choose.&quot;</em></li>
+<li><em>&quot;Your tax return, backed for life.&quot;</em></li>
+<li>Campaign tagline TY2025: <em>&quot;Now taxes are drama free&quot;</em> (Super Bowl LX)</li>
+</ul>
+<p><strong>The homepage hero does NOT currently mention &quot;Intuit Assist&quot; or &quot;AI&quot;</strong> — a deliberate choice to lead with outcome and trust language.</p>
+<p><strong>Solution Framing.</strong> Two distinct voices: <strong>consumer marketing leads with outcome</strong> (<em>&quot;100% right,&quot;</em> <em>&quot;drama free&quot;</em>); <strong>investor/technical communications lead with capability</strong> (<em>&quot;agentic AI,&quot;</em> <em>&quot;GenOS,&quot;</em> <em>&quot;90% of forms automated&quot;</em>). The human+AI bridge is explicit. CMO Thomas Ranese on Super Bowl LX: <em>&quot;With technology, I do believe that in some ways humanity, creativity, insights, empathy become more precious... Our story — ironically as a tech company investing in AI — was all about the human experts.&quot;</em> This is a <strong>deliberate de-emphasis of AI in the hero narrative even as AI is the underlying engine</strong>.</p>
+<p><strong>Differentiation.</strong> Vs. H&amp;R Block: both launched AI Tax Assist for TY2024. TurboTax emphasizes mobile-first UX, larger expert network (12,000+), AI Concierge, and the Google Cloud / Gemini partnership. Vs. FreeTaxUSA / Cash App Taxes: concedes price-leader segment; focuses AI narrative on complex filers and switchers. Vs. horizontal AI (ChatGPT doing taxes): counter is the <strong>&quot;ground-truth&quot; argument</strong> — GenRuntime <em>&quot;ties language models to ground truth facts, minimizing hallucinations&quot;</em> plus the proprietary tax knowledge engine that general LLMs don&#39;t have; the accuracy guarantees are the moat.</p>
+<p><strong>Proof &amp; Trust.</strong> Quantified claims: 44M returns (TY2023), $107B in refunds, 6M hours saved via automation, 90% form coverage, 12,000+ experts with 13-year average experience, ~600 Expert Offices, ~20 new TurboTax stores. Trust guarantee stack: 100% Accurate Calculations Guarantee, Maximum Refund Guarantee, <em>&quot;Your tax return, backed for life&quot;</em> (7-year coverage). <strong>Notable gap: no AI-specific guarantee</strong> — the AI is wrapped under traditional calc-error guarantees rather than carrying its own warranty. Named consumer stories are composite personas, not B2B-style case studies.</p>
+<p><strong>GTM Motion &amp; Pricing.</strong> Extreme seasonal push (Jan–Apr). Channel mix: Super Bowl (13th consecutive appearance in 2026), Netflix, Prime Video, Spotify, podcasts, TikTok, YouTube, NCAA/NFL partnerships, R/GA creative. Per Fortune (Feb 2026): <em>&quot;selling and marketing is generally the largest expenditure in Intuit&#39;s financial statements — larger even than research and development.&quot;</em> Super Bowl LX 45-second Adrien Brody spot reportedly cost &quot;substantially more&quot; than the $8–10M baseline. <strong>Pricing: AI is bundled into every SKU including Free Edition</strong> — Intuit Assist is not a paywalled add-on. The monetization model is AI drives efficiency and expert-tier upsell, not direct AI subscription.</p>
+<p><strong>Signature Moments.</strong> (1) <em>&quot;Now This Is Taxes&quot;</em> TY2024 campaign, AI-forward, six hero spots at Super Bowl LIX; (2) <strong>Super Bowl LX 2026 Adrien Brody &quot;Drama-Free&quot; spot</strong> — notable pivot to human-expert narrative, earned an &quot;A&quot; from Kellogg&#39;s Super Bowl review panel; (3) Uber Rides partnership for TY2025 — free $25 rides to drive foot traffic to 20 new TurboTax stores and ~600 Expert Offices, Expert Full Service flat $150 promo through March 18, 2026.</p>
+<p><strong>Launch Archetype.</strong> <strong>Platform-depth with a Safety-first veneer.</strong> Platform-depth because the AI is positioned as a capability stack (GenOS, Document AI/Gemini, AI Concierge, Outcome Maximization, Cost Basis, Refund Assistant) deeply embedded — not standalone. Safety-first veneer because consumer-facing messaging wraps every AI claim in the guarantee stack and the Super Bowl LX pivot explicitly retreated from AI-forward language. Not Democratize-scale because TurboTax is trading up-market.</p>
+<p><strong>Strengths.</strong> Unmatched distribution and brand recall (13 Super Bowls). Full-stack AI story backed by real partnerships (Google Cloud + Gemini). Intellectually honest &quot;AI + human expert&quot; framing. Accuracy moat from decades of tax-domain data + RAG-grounded gen-AI.</p>
+<p><strong>Gaps.</strong> <strong>No AI-specific guarantee</strong> — if Intuit Assist hallucinates a deduction, the umbrella guarantee technically covers it, but there is no explicit &quot;AI trustworthy because of X warranty&quot; language. <strong>Hero copy silence on AI</strong> — may signal consumer AI fatigue or regulatory caution. Thin public AI-attributed testimonials. H&amp;R Block has similar AI claims; without independent benchmarks, filers can&#39;t differentiate.</p>
+<hr>
+<h3 id="23-klaviyo"><a href="#23-klaviyo" class="anchor">#</a>2.3 — Klaviyo</h3>
+<p><strong>Named AI Products.</strong> <em>Composer</em> (March 2026, private beta) — <em>&quot;AI agent for vibe marketing,&quot;</em> one prompt produces multi-channel campaign; <em>Marketing Agent</em> (K:BOS 2025); <em>Customer Agent</em> (GA 2025, 65% deflection); <em>Predictive Analytics</em> (CLV, churn risk, next-order-date — gated behind Marketing Analytics add-on); <em>Advanced KDP</em> (unified identity + attribution); <em>Personalized Send Time</em> (35% click lift claim); <em>Audience Optimization: Refine</em> (predictive unsubscribe scoring); <em>Remix</em> (image generation, powered by Google Nano Banana); <em>Agent Guidance</em>; <em>Revenue Intelligence dashboard</em>.</p>
+<p><strong>ICP &amp; Segmentation.</strong> Sharp ICP: <strong>Shopify-based DTC and scaling e-commerce brands, $50K/mo GMV and up, through mid-market retail ($10M–$500M revenue) and, increasingly, enterprise</strong>. 193,000 customers, 100+ countries, <strong>large-customer ($50K+ ARR) growth of 37% YoY</strong> in Q4 2025. Featured brands: Glossier, Dollar Shave Club, Daily Harvest, Tatcha, Vans.</p>
+<p><strong>Problem Statement (verbatim).</strong></p>
+<ul>
+<li><em>&quot;The execution layer in software is moving from humans to agents.&quot;</em> — Bialecki</li>
+<li><em>&quot;What matters now is having both the agents that do the work, and the infrastructure that gives them the full picture of the customer.&quot;</em> — Bialecki</li>
+<li><em>&quot;Brands define outcomes and agents execute them.&quot;</em></li>
+<li>Pain: <em>&quot;fragmented legacy stacks&quot;</em> that can&#39;t unify data, marketing, and service for real-time B2C engagement.</li>
+</ul>
+<p><strong>Value Propositions (verbatim).</strong></p>
+<ul>
+<li>Homepage tagline: <em>&quot;The autonomous B2C CRM&quot;</em></li>
+<li>Headline: <em>&quot;AI marketing &amp; service to grow relationships&quot;</em></li>
+<li>Subheadline: <em>&quot;Powering 193,000+ relationship-driven brands across 100 countries&quot;</em></li>
+<li>Composer: <em>&quot;You dream it. Composer builds it.&quot;</em> / <em>&quot;The AI agent for vibe marketing&quot;</em></li>
+<li>Customer Agent: <em>&quot;Resolves 65% of questions autonomously.&quot;</em></li>
+</ul>
+<p><strong>Solution Framing.</strong> Explicit <strong>category-creation play</strong> — reframing from &quot;email + SMS for e-commerce&quot; to <em>&quot;Autonomous B2C CRM,&quot;</em> aimed at Salesforce/HubSpot/Braze territory while keeping the DTC base. Translation chain is consistent: AI capability → merchant outcome (Customer Agent → 65% deflection → lower service cost; Composer → more campaigns shipped; Predictive CLV → targeted winback → 14–45% revenue-per-recipient lift). Earnings-call reinforcement: <em>&quot;More than half of the campaigns created by customers using Marketing Agent are now generated by AI&quot;</em> and <em>&quot;a 50% increase in open rates and a 40% growth in revenue per campaign for some customers.&quot;</em></p>
+<p><strong>Differentiation.</strong> Vs. <strong>Mailchimp</strong>: <em>&quot;Klaviyo AI is native and proactive&quot;</em> while <em>&quot;Mailchimp AI isn&#39;t able to access the breadth of data and insights that Klaviyo uses.&quot;</em> Cites <em>&quot;a net 14,200 new merchants who had previously used Mailchimp&quot;</em> in H1 2026. Foregrounds real-time Shopify data sync (<em>&quot;milliseconds&quot;</em>), 193K-brand training corpus, and the agent layer. Vs. <strong>Shopify Email</strong>: positioned as the graduation path. Vs. <strong>HubSpot</strong>: <em>&quot;first autonomous B2C CRM&quot;</em> — purpose-built-for-consumers vs. HubSpot&#39;s B2B DNA. Vs. <strong>Attentive</strong>: unified data + multi-channel vs. SMS-only. Vs. <strong>horizontal AI</strong>: moat is data grounding — <em>&quot;outputs aren&#39;t based on generic best practices, but on what&#39;s proven to work across Klaviyo&#39;s 193,000 customers&quot;</em> and 14+ years of marketing intelligence + billions of consumer interactions.</p>
+<p><strong>Proof &amp; Trust.</strong> Named customers: <strong>Every Man Jack</strong> (<em>&quot;12.4% of brand&#39;s Klaviyo-attributed revenue came from predictive analytics segments in just 90 days&quot;</em>), <strong>Willow Tree Boutique</strong> (<em>&quot;53.1% HoH campaign-revenue growth&quot;</em>), unnamed Charleston skincare brand (<em>&quot;58% revenue lift in 90 days&quot;</em>), plus 2xist, EZ Bombs (56.1x ROI, 27% YoY). Training-data claim (headline everywhere): <em>&quot;14+ years of marketing intelligence and billions of consumer interactions&quot;</em> from 193,000 customers. Human-in-the-loop: <em>&quot;Nothing launches without your sign-off.&quot;</em> <strong>Gap: no named AI-specific certification</strong> (ISO 42001, AIUC-1). SOC 2 and GDPR only.</p>
+<p><strong>GTM Motion &amp; Pricing.</strong> Self-serve PLG anchored on Shopify App Store (117K+ joint brands), agency partner ecosystem, growing enterprise direct sales. Active-profile billing + stacked add-ons. Free → 250 profiles. Marketing: scales with profile count. <strong>Marketing Analytics add-on</strong>: ~$100/mo at 13.5K profiles (unlocks predictive analytics). <strong>Advanced KDP</strong>: ~$500/mo at 100K profiles — <strong>mutually exclusive with Marketing Analytics</strong>, a known merchant frustration. <strong>Klaviyo One</strong>: auto-enrolled for $10K+/mo accounts, adds 20% fee. <strong>Customer Agent</strong>: $140/mo intro → <strong>$200/mo after March 31, 2026 (+43%)</strong>, 50 conversations included, then $0.70/conversation overage. <strong>2026 pricing backlash</strong> is intensifying: active-profile billing, Klaviyo One surcharge, Customer Agent step change. Reddit/G2 thread sentiment: <em>&quot;brutal&quot;</em> for scaling brands; G2/Trustpilot note <em>&quot;slow support.&quot;</em></p>
+<p><strong>Signature Moments.</strong> (1) <strong>K:BOS 2025</strong> (Sept 25–26, Boston) — Bialecki keynote <em>&quot;Built for B2C: The new era of consumer relationships,&quot;</em> launched K:AI Marketing Agent + Customer Agent, introduced Klaviyo Service and Customer Hub, thesis line <em>&quot;AI with people, not AI versus people&quot;</em>; (2) <strong>Google strategic partnership</strong> (Feb 24, 2026) — BigQuery data centralization, Nano Banana image generation, Google Search → RCS conversational entry point; (3) <strong>Composer private beta launch</strong> (March 24, 2026) with 75+ platform announcements and formal rebrand to <em>&quot;Autonomous B2C CRM,&quot;</em> coincident with <strong>co-CEO Chano Fernández appointment (Dec 2025)</strong> — freeing Bialecki to focus full-time on AI vision.</p>
+<p><strong>Launch Archetype.</strong> <strong>Platform-depth + Category-creation hybrid, leaning Platform-depth.</strong> Rationale: not safer (not Safety-first), not democratizing (pricing moving upmarket, not Democratize-scale). Signature claim is <strong>depth of proprietary data</strong> (14 years, 193K brands, 8B profiles) feeding agents that execute at full-platform scope (marketing + service + data + analytics). <em>&quot;Autonomous B2C CRM&quot;</em> is a deliberate category-name grab; Google partnership reinforces depth.</p>
+<p><strong>Strengths.</strong> Data moat (14 years / 193K brands / 8B profiles) is consistent and real. Best-in-class Shopify real-time sync. Customer Agent 65% deflection is a concrete defensible KPI. Agent adoption traction (&gt;50% of Marketing Agent customers ship AI-generated campaigns). Category-creation discipline. Google partnership adds structural credibility.</p>
+<p><strong>Gaps.</strong> <strong>Growth deceleration</strong> — FY25 +32% to $1.234B; <strong>FY26 guide +21.5–22.5% to $1.501–1.509B</strong>, a ~10-point deceleration. Guidance <em>&quot;assumes minimal revenue contribution from the newest AI and service products.&quot;</em> <strong>Pricing backlash intensifying</strong> — active-profile billing, Klaviyo One 20% surcharge, Customer Agent +43% step. <strong>Add-on fragmentation</strong> — Marketing Analytics vs. Advanced KDP mutually exclusive. <strong>SMB tension</strong> — priced above many SMBs; Mailchimp still owns &lt;$50K/mo segment. <strong>Support quality</strong> complaints unusual for an &quot;autonomous&quot; narrative. <strong>Composer still private beta</strong> — GA counter-positioning window open for 2–3 quarters. AI gated behind add-ons — a merchant on base Klaviyo doesn&#39;t get predictive CLV or churn risk, a line Mailchimp can exploit.</p>
+<hr>
+<h3 id="24-salesforce"><a href="#24-salesforce" class="anchor">#</a>2.4 — Salesforce</h3>
+<p><strong>Named AI Products.</strong> <em>Agentforce</em> (Sept 2024, umbrella brand) — <em>&quot;the third wave of AI — moving beyond copilots to a new era of highly-accurate, low-hallucination intelligent agents that actively drive customer success.&quot;</em> <em>Agentforce 2.0</em> (Dec 2024) — <em>&quot;the first digital labor platform.&quot;</em> <em>Agentforce 360</em> (Dreamforce 2025, Oct 13) — flagship with four pillars: <em>Agentforce 360 Platform</em>, <em>Data 360</em> (rebranded Data Cloud), <em>Customer 360 apps</em>, <em>Slack</em>. <em>Atlas Reasoning Engine</em> (executes retrieve-reason-act-evaluate agentic loop). <em>Einstein Trust Layer</em> (dynamic grounding, zero-data retention w/ OpenAI/Azure, masking, toxicity detection, audit trail). Pre-built agents: Service, Sales (SDR + Coach), Marketing, Commerce, <em>Agentforce Voice</em>, <em>Agentforce Vibes</em>. Industry agents: Financial Services, Health. 300+ industry-ready agents claimed. App rebrands: Service Cloud → Agentforce Service, Sales Cloud → Agentic Sales, Marketing Cloud → Agent Marketing. <em>MuleSoft Agent Fabric</em> for multi-vendor orchestration. <em>Apromore</em> acquisition (2025) for process intelligence.</p>
+<p><strong>ICP &amp; Segmentation.</strong> Primary: enterprise buyers of existing Salesforce Clouds (sold cloud-by-cloud — Sales / Service / Marketing / Commerce / Industries). Vertical segmentation: Financial Services, Health/Life Sciences, Public Sector, Retail, Manufacturing. Mid-market push via Flex Credits + per-user $125/user/month. Channel: ecosystem-first (Accenture, Deloitte, PWC&#39;s Agentic Contact Center; AppExchange; MuleSoft).</p>
+<p><strong>Problem Statement (verbatim).</strong></p>
+<ul>
+<li><em>&quot;This is the moment where this technology innovation is out-stripping customer adoption.&quot;</em> — Benioff, Dreamforce 2025</li>
+<li><em>&quot;We are the last generation to lead a human-only workforce.&quot;</em> — Benioff</li>
+<li><em>&quot;We are really moving into a world now of managing humans and agents together.&quot;</em></li>
+<li><em>&quot;Every company can be an agentic enterprise but we have to keep the human in the loop.&quot;</em></li>
+<li>Framing: enterprises must <em>&quot;bridge the gap between AI innovation and AI adoption.&quot;</em></li>
+</ul>
+<p><strong>Value Propositions (verbatim).</strong></p>
+<ul>
+<li><em>&quot;#1 AI CRM&quot;</em> / <em>&quot;#1 Agentic CRM&quot;</em></li>
+<li><em>&quot;Welcome to the Agentic Enterprise: With Agentforce 360, Salesforce Elevates Human Potential in the Age of AI&quot;</em> (Oct 13, 2025 press release)</li>
+<li><em>&quot;The next revolution after cloud, mobile, and social — the agentic AI revolution&quot;</em></li>
+<li><em>&quot;AI elevates human potential&quot;</em> (deliberate 2025 replacement for the more controversial <em>&quot;digital labor&quot;</em> framing)</li>
+</ul>
+<p><strong>Solution Framing.</strong> Canonical <strong>Platform-depth</strong> — three-layered moat:</p>
+<ol>
+<li><strong>Data</strong> — customer data already lives in Salesforce.</li>
+<li><strong>Metadata</strong> — 25 years of business-object schemas, permissions, process metadata describe <em>how</em> work gets done.</li>
+<li><strong>Agents</strong> — grounded in (1) + (2) are more accurate and governed than a generic LLM wrapper.</li>
+</ol>
+<p>Benioff&#39;s explicit framing: Data 360 is <em>&quot;the brains&quot;</em>; Agentforce is the action layer; Customer 360 apps are the surface; Slack is the <em>&quot;agentic home&quot;</em> / <em>&quot;agentic OS.&quot;</em> <strong>&quot;Humans + agents&quot;</strong> — explicitly not autonomous — to preserve change-management comfort.</p>
+<p><strong>Differentiation.</strong> Vs. <strong>Microsoft Copilot/Dynamics</strong>: <em>&quot;Agentforce acts; Copilot assists.&quot;</em> Digital worker vs. digital assistant, CRM-native automation vs. productivity overlay. Microsoft&#39;s $800M Copilot revenue + 25%+ share means Salesforce differentiates on CRM depth and Trust Layer rather than distribution. Vs. <strong>HubSpot</strong>: rarely mentioned — competes on enterprise scale and Data 360. Vs. <strong>Oracle / ServiceNow</strong>: ServiceNow is closest structural competitor; Salesforce counter-positions on customer data gravity (vs. ServiceNow&#39;s employee workflows). Vs. <strong>build-your-own on OpenAI/Anthropic</strong>: Einstein Trust Layer + the metadata argument (<em>&quot;generic LLMs don&#39;t know your business; we do&quot;</em>). Also co-opts the model layer — Salesforce partners with OpenAI (GPT-5, ChatGPT in Slack) and Anthropic (Claude preferred for regulated industries), neutralizing the DIY threat.</p>
+<p><strong>Proof &amp; Trust.</strong> Named customers (recur in keynotes + website): <strong>1-800Accountant</strong> (<em>&quot;70% of chat engagements autonomously resolved&quot;</em> during tax week 2025, 1,000+ conversations in first 24 hours); <strong>Wiley</strong> (<em>&quot;213% ROI,&quot;</em> faster onboarding, case deflection); <strong>OpenTable</strong> (bookings/menu); <strong>Saks</strong> (luxury customer service); <strong>Dell</strong> (supplier onboarding 60→20 days — the strongest proof per Fortune); <strong>PepsiCo</strong> (small-retailer servicing); <strong>Williams-Sonoma</strong> (recipe-advice agent — Fortune called <em>&quot;gimmicky&quot;</em> with unclear ROI). Trust: <strong>Einstein Trust Layer</strong> — dynamic grounding, zero-data retention (<strong>caveat: only applies to OpenAI/Azure OpenAI integrations</strong>), PII masking pre-LLM/un-masked post, audit trail. Compliance framing heaviest for FinServ/Health.</p>
+<p><strong>GTM Motion &amp; Pricing.</strong> Enterprise field sales + partner ecosystem. Dreamforce + World Tours + TrailblazerDX are marquee moments. <strong>Pricing has thrashed three times in 18 months</strong>:</p>
+<ol>
+<li><strong>$2 per conversation</strong> (original Oct 2024) — backlash: unpredictable + value-misaligned</li>
+<li><strong>Flex Credits</strong> (May 2025) — min 100k credits for $500; $0.10 per action. Pay-as-you-go GA Aug 2025. Can&#39;t combine with Conversations</li>
+<li><strong>Per-user &quot;digital labor&quot; licenses</strong> — $125/user/month, late 2025</li>
+<li><strong>Agentic Enterprise License Agreement</strong> (Dreamforce 2025) — unlimited Agentforce + Data 360 bundled for top accounts</li>
+</ol>
+<p><strong>Q3 FY26 reported</strong>: Agentforce + Data 360 hit <strong>$1.4B ARR</strong>, 18,500 deals closed (9,500 paid), 3.2T tokens processed, 114% YoY, Agentforce alone &gt;$500M ARR. <strong>Note</strong>: paid deployments are a subset; much of the deal count is trials/POCs.</p>
+<p><strong>Signature Moments.</strong> (1) <strong>&quot;Ask More of AI&quot; with Matthew McConaughey</strong> — flagship 2024–2026, reportedly $10M+/year, includes <em>&quot;The Great Data Heist&quot;</em> (Wild West sheriff, 2024) and Super Bowl LIX 2025 <em>&quot;Dining Al Fiasco&quot;</em> and <em>&quot;Gate Expectations&quot;</em>; (2) <strong>Dreamforce 2024 Agentforce debut</strong> — <em>&quot;what AI was meant to be,&quot;</em> $2/conversation intro; (3) <strong>Dreamforce 2025 — Agentforce 360 + Agentic Enterprise tentpole</strong> — Data Cloud → Data 360 rename, every core app gets <em>Agent</em>-prefix, Slack as <em>&quot;agentic home,&quot;</em> OpenAI + Anthropic expansions, Apromore acquisition; (4) <strong>Agentforce 2.0 / Digital Labor Platform launch</strong> (Dec 2024) with Atlas Reasoning Engine.</p>
+<p><strong>Launch Archetype.</strong> <strong>Platform-depth, par excellence.</strong> Rationale: sole value story is <em>&quot;your data + our metadata + agents&quot;</em> — impossible to replicate without a CRM footprint. Every announcement extends platform surface (industry agents, Slack agents, MuleSoft Agent Fabric). Pricing evolution is platform economics — bundle into ELA. Secondary Safety-first traces (Einstein Trust Layer, &quot;humans + agents&quot;) used defensively. Explicitly NOT Democratize-scale — brand is aspirational enterprise.</p>
+<p><strong>Strengths.</strong> <strong>Ecosystem lock-in + distribution</strong> — 150K customer base is a standing army of prospects. <strong>Trust Layer narrative</strong> — first to productize governance as a feature. <strong>Brand muscle</strong> — McConaughey campaign gives Salesforce AI recognition no B2B peer has. <strong>Pivot agility</strong> — <em>&quot;digital labor&quot;</em> → <em>&quot;elevates human potential&quot;</em> rebrand in ~6 months shows tight narrative control. <strong>Industry verticalization</strong> — prebuilt agents for FinServ/Health are a real moat vs. horizontal copilots.</p>
+<p><strong>Gaps.</strong> <strong>Adoption vs. hype gap</strong> — Forrester: <em>&quot;we saw little adoption or impact from AI agents — lots of potential but a long way to go for a meaningful ROI.&quot;</em> Keynote case studies <em>&quot;lacked details on metrics, ROI, or measurement.&quot;</em> Only ~8% of base on Agentforce; ~6,000 paid per Fortune. Benioff himself admits the gap. <strong>Pricing thrash</strong> — three models in 18 months signals commercial instability. <strong>Deterministic pivot</strong> — AI CERTs News flags a shift from open LLMs toward deterministic automation, suggesting internal reliability concerns. <strong>&quot;Agentic enterprise&quot; undefined</strong> — Forrester&#39;s Dreamforce 2025 critique: term used everywhere but never operationalized. <strong>Gimmick risk</strong> — Williams-Sonoma recipe agent hurts credibility.</p>
+<hr>
+<h2 id="part-3-comparative-synthesis"><a href="#part-3-comparative-synthesis" class="anchor">#</a>Part 3 — Comparative Synthesis</h2>
+<h3 id="31-cross-company-scorecard-framework-dimensions"><a href="#31-cross-company-scorecard-framework-dimensions" class="anchor">#</a>3.1 — Cross-Company Scorecard (Framework Dimensions)</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Dimension</th>
+<th>QuickBooks</th>
+<th>TurboTax</th>
+<th>Klaviyo</th>
+<th>Salesforce</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Naming clarity</strong></td>
+<td>Weak (drift across 5+ labels)</td>
+<td>Moderate (Intuit Assist + named features)</td>
+<td>Strong (Composer, Marketing Agent, Customer Agent)</td>
+<td>Strong (Agentforce 360 umbrella)</td>
+</tr>
+<tr>
+<td><strong>ICP sharpness</strong></td>
+<td>Multi-tier (SMB + accountant + mid-market)</td>
+<td>Tiered (DIY / Assisted / Full Service)</td>
+<td><strong>Sharp (Shopify DTC $50K+/mo)</strong></td>
+<td>Cloud-by-cloud enterprise</td>
+</tr>
+<tr>
+<td><strong>Problem statement</strong></td>
+<td>Weak (benefit-led, not pain-led)</td>
+<td><strong>Strong (emotional: anxiety, tedium)</strong></td>
+<td>Strong (<em>&quot;execution layer moving from humans to agents&quot;</em>)</td>
+<td>Moderate (adoption gap framing)</td>
+</tr>
+<tr>
+<td><strong>Value prop clarity</strong></td>
+<td>Moderate (<em>&quot;Automation where it counts&quot;</em>)</td>
+<td><strong>Strong (<em>&quot;drama-free,&quot;</em> &quot;100% right&quot;*)</strong></td>
+<td><strong>Strong (<em>&quot;Autonomous B2C CRM&quot;</em>)</strong></td>
+<td><strong>Strong (<em>&quot;#1 Agentic CRM&quot;</em>)</strong></td>
+</tr>
+<tr>
+<td><strong>Solution framing</strong></td>
+<td>Metaphor + outcome hybrid</td>
+<td>Outcome (consumer) / capability (investor)</td>
+<td>Category-creation</td>
+<td>Platform-depth (three-layer data/metadata/agents)</td>
+</tr>
+<tr>
+<td><strong>Differentiation vs horizontal AI</strong></td>
+<td>Implicit (&quot;ledger depth&quot;)</td>
+<td><strong>Explicit (accuracy guarantees)</strong></td>
+<td><strong>Explicit (193K brand training data)</strong></td>
+<td><strong>Explicit (Einstein Trust Layer + metadata)</strong></td>
+</tr>
+<tr>
+<td><strong>Proof &amp; trust quality</strong></td>
+<td>Weak (aggregate surveys, no AI cert)</td>
+<td>Moderate (guarantee stack, no AI cert)</td>
+<td>Moderate (named brands w/ %, no AI cert)</td>
+<td><strong>Strong (named brands w/ $, Trust Layer)</strong></td>
+</tr>
+<tr>
+<td><strong>GTM motion strength</strong></td>
+<td>Moderate (ProAdvisor moat, no Super Bowl)</td>
+<td><strong>Strong (13 Super Bowls, full-funnel)</strong></td>
+<td>Strong (PLG + agency + enterprise)</td>
+<td><strong>Very strong (ecosystem + events + brand)</strong></td>
+</tr>
+<tr>
+<td><strong>Pricing coherence</strong></td>
+<td>Strong (tier-gated, stable)</td>
+<td><strong>Strong (AI bundled in every SKU)</strong></td>
+<td>Weak (stacked add-ons, backlash)</td>
+<td><strong>Weak (3 models in 18 months)</strong></td>
+</tr>
+<tr>
+<td><strong>Signature moments</strong></td>
+<td>Moderate (Investor Day, Intuit Connect)</td>
+<td><strong>Strong (Super Bowl LX, Uber partnership)</strong></td>
+<td>Strong (K:BOS, Google, Composer)</td>
+<td><strong>Very strong (Dreamforce, McConaughey, LX)</strong></td>
+</tr>
+<tr>
+<td><strong>Launch archetype fit</strong></td>
+<td>Platform-depth + Safety reassurance</td>
+<td>Platform-depth + Safety veneer</td>
+<td>Platform-depth + Category-creation</td>
+<td><strong>Pure Platform-depth</strong></td>
+</tr>
+<tr>
+<td><strong>Dunford sales-pitch score (x/5)</strong></td>
+<td>2 (weak problem, implicit alternatives)</td>
+<td>3.5 (strong problem, weak tradeoff)</td>
+<td><strong>4 (strong insight, strong tradeoff, strong proof)</strong></td>
+<td>4 (strong POV, weak on named tradeoffs)</td>
+</tr>
+</tbody></table></div>
+<h3 id="32-common-themes-across-all-four"><a href="#32-common-themes-across-all-four" class="anchor">#</a>3.2 — Common Themes Across All Four</h3>
+<p><strong>1. No one leads with &quot;AI&quot; in hero copy.</strong> Every company pushed AI language out of the hero and into sub-copy or investor-only narratives. TurboTax&#39;s Super Bowl LX pivot is the cleanest example. QuickBooks leads with <em>&quot;virtual team&quot;</em> and <em>&quot;automation where it counts.&quot;</em> Klaviyo leads with <em>&quot;Autonomous B2C CRM.&quot;</em> Salesforce leads with <em>&quot;elevates human potential.&quot;</em> <strong>The hero is the metaphor or outcome; AI is the engine.</strong></p>
+<p><strong>2. &quot;Humans + AI&quot; is the universal safety frame.</strong> QuickBooks: <em>&quot;Human when it matters.&quot;</em> TurboTax: <em>&quot;AI + human expert.&quot;</em> Klaviyo: <em>&quot;AI with people, not AI versus people.&quot;</em> Salesforce: <em>&quot;humans and agents working together... we are the last generation to lead a human-only workforce.&quot;</em> Nobody is pitching pure autonomy.</p>
+<p><strong>3. Customer-outcome numbers are the hard currency.</strong> Every company leads proof with a number: <em>&quot;5 days faster&quot;</em> (QBO), <em>&quot;6 million hours saved&quot;</em> (TurboTax), <em>&quot;65% deflection&quot;</em> (Klaviyo), <em>&quot;213% ROI&quot;</em> (Salesforce). Generic descriptions don&#39;t survive.</p>
+<p><strong>4. Horizontal-AI defense is now table stakes.</strong> Every company has an answer for <em>&quot;why not just use ChatGPT?&quot;</em> — grounded in proprietary data depth: ledger data (QBO), tax knowledge engine (TurboTax), 193K-brand training (Klaviyo), Data 360 + metadata (Salesforce). Those without a credible moat story are in trouble.</p>
+<p><strong>5. Pricing is the pressure point.</strong> Every company is struggling with how to price AI. QBO tiers aggressively (+64% on Plus since 2020). TurboTax bundles free. Klaviyo stacks add-ons + hits merchants with 20% Klaviyo One surcharge + 43% Customer Agent step change. Salesforce changed models three times in 18 months. <strong>There is no consensus commercial playbook yet.</strong></p>
+<p><strong>6. Trust certifications are a gap for everyone except Salesforce.</strong> None of QBO, TurboTax, or Klaviyo cite an AI-specific certification (NIST AI RMF, ISO/IEC 42001, AIUC-1). All fall back to generic SOC 2 / PCI / accuracy guarantees. Salesforce&#39;s Einstein Trust Layer is the only named governance artifact doing real marketing work. <strong>This is an open field for Mailchimp.</strong></p>
+<h3 id="33-unique-themes-what-each-company-does-that-others-dont"><a href="#33-unique-themes-what-each-company-does-that-others-dont" class="anchor">#</a>3.3 — Unique Themes (What Each Company Does That Others Don&#39;t)</h3>
+<p><strong>QuickBooks</strong> — uniquely uses a <strong>character metaphor</strong> (<em>&quot;virtual team&quot;</em>) that anthropomorphizes the AI. Uniquely ties AI capabilities to pricing tier-upgrades as the commercial lever.</p>
+<p><strong>TurboTax</strong> — uniquely has a <strong>multi-decade accuracy guarantee stack</strong> (<em>&quot;backed for life&quot;</em>) and uniquely pairs AI with a physical retail + expert network (TurboTax stores, 12,000 experts). Uniquely deploys <strong>Super Bowl-scale consumer brand investment</strong>.</p>
+<p><strong>Klaviyo</strong> — uniquely makes a <strong>category-creation move</strong> (<em>&quot;Autonomous B2C CRM&quot;</em>). Uniquely leverages a <strong>hyper-specific training-data moat</strong> (14 years / 193K brands / 8B profiles). Uniquely uses the <strong>&quot;vibe marketing&quot;</strong> meme from the developer-world &quot;vibe coding&quot; frame.</p>
+<p><strong>Salesforce</strong> — uniquely productizes <strong>governance as a feature</strong> (Einstein Trust Layer). Uniquely executes <strong>ecosystem-scale enterprise distribution</strong> (150K customers + SIs + ISVs + AppExchange). Uniquely pays for <strong>celebrity creative advisory</strong> (McConaughey at $10M+/year). Uniquely has a <strong>three-layer technical moat argument</strong> (data + metadata + agents).</p>
+<h3 id="34-archetype-mapping"><a href="#34-archetype-mapping" class="anchor">#</a>3.4 — Archetype Mapping</h3>
+<pre><code>                  Safety-First          Democratize-Scale         Platform-Depth
+                  (Anthropic pattern)   (OpenAI pattern)          (Google/MSFT/Salesforce pattern)
+
+QuickBooks        ◐ (veneer)            ○                         ● (primary)
+TurboTax          ◐ (veneer)            ○                         ● (primary)
+Klaviyo           ○                     ○                         ● (primary + category-creation overlay)
+Salesforce        ◐ (Trust Layer)       ○                         ● (primary, canonical)
+
+Legend: ● primary  ◐ secondary/overlay  ○ absent
+</code></pre>
+<p><strong>Observation:</strong> All four companies cluster in Platform-depth. <strong>No company in this set is executing a Democratize-scale play.</strong> That archetype is being run by OpenAI, Anthropic, and increasingly HubSpot Breeze for mid-market. The platform-depth cluster reflects these companies&#39; structural advantages — existing customer bases, data moats, enterprise relationships. For Mailchimp, this creates an opportunity: <strong>a Democratize-scale AI play targeting the &lt;$50K/mo SMB segment Klaviyo has abandoned</strong> is uncontested in this competitive set.</p>
+<hr>
+<h2 id="part-4-implications-for-mailchimp"><a href="#part-4-implications-for-mailchimp" class="anchor">#</a>Part 4 — Implications for Mailchimp</h2>
+<p>Three strategic moves emerge from this cross-company analysis:</p>
+<h3 id="move-1-own-a-single-ai-umbrella-brand"><a href="#move-1-own-a-single-ai-umbrella-brand" class="anchor">#</a>Move 1 — Own a single AI umbrella brand</h3>
+<p>Salesforce consolidated Einstein + Data Cloud + Copilot + Industries under <em>&quot;Agentforce 360.&quot;</em> Klaviyo consolidated under <em>&quot;Autonomous B2C CRM.&quot;</em> QuickBooks is still mid-transition (Intuit Assist / Intuit Intelligence / virtual team of agents — a cautionary tale). Mailchimp today has Analytics Agent, Insights Agent, Customer Agent, Growth Agent and more in flight. <strong>The single highest-leverage PMM move is to pick an umbrella brand and stick to it.</strong> Options to test via message-testing (Wynter):</p>
+<ul>
+<li><em>&quot;Marketing Intelligence Agent&quot;</em></li>
+<li><em>&quot;Mailchimp Growth AI&quot;</em></li>
+<li><em>&quot;The Autonomous Marketing Platform for Small Business&quot;</em></li>
+<li><em>&quot;Mailchimp Intelligence&quot;</em> (mirrors Intuit Intelligence architecturally)</li>
+</ul>
+<h3 id="move-2-productize-governance-not-just-compliance"><a href="#move-2-productize-governance-not-just-compliance" class="anchor">#</a>Move 2 — Productize governance, not just compliance</h3>
+<p>None of QuickBooks, TurboTax, or Klaviyo have an AI-specific trust artifact. Salesforce does (Einstein Trust Layer) and analysts cite it. <strong>Mailchimp should build and name a governance layer</strong> covering: grounding on customer&#39;s CDP data (analogous to Data 360), zero-retention posture with the LLM providers, eval methodology (golden dataset, accuracy/hallucination judges), audit log for AI actions. Package it as <em>&quot;Mailchimp AI Trust&quot;</em> or similar. This is the missing piece in every competitor&#39;s narrative and a clear positioning wedge for enterprise and mid-market deals where legal/IT teams gate adoption.</p>
+<h3 id="move-3-attack-the-segment-klaviyo-is-abandoning"><a href="#move-3-attack-the-segment-klaviyo-is-abandoning" class="anchor">#</a>Move 3 — Attack the segment Klaviyo is abandoning</h3>
+<p>Klaviyo&#39;s FY26 growth deceleration to ~22%, active-profile billing backlash, Klaviyo One 20% surcharge, and Customer Agent +43% step change are all pushing SMB merchants away from the brand. Reviews consistently flag Klaviyo as <em>&quot;too expensive for smaller businesses.&quot;</em> <strong>Mailchimp&#39;s strongest counter-positioning is:</strong> <em>&quot;AI in the core plan. No add-ons. No surcharges.&quot;</em> This is a direct shot at Klaviyo&#39;s stacked add-on model (Marketing Analytics $100 + Advanced KDP $500 + Klaviyo One 20% + Customer Agent $200). Pair it with a Democratize-scale launch archetype — the uncontested archetype in this competitive set.</p>
+<h3 id="bonus-move-4-borrow-the-best-tactics"><a href="#bonus-move-4-borrow-the-best-tactics" class="anchor">#</a>Bonus Move 4 — Borrow the best tactics</h3>
+<ul>
+<li><strong>From Salesforce:</strong> the Trust Layer productization pattern + named-customer ROI proof discipline (213% ROI, 70% deflection — every claim has a logo and a number).</li>
+<li><strong>From Klaviyo:</strong> the data-moat narrative (if Mailchimp can credibly claim <em>&quot;trained on X brands / Y years / Z campaigns&quot;</em> that rivals Klaviyo&#39;s 193K/14yr/8B, own that number hard).</li>
+<li><strong>From TurboTax:</strong> the multi-decade guarantee stack as trust-building — what&#39;s the Mailchimp version of <em>&quot;Your campaigns, backed for life&quot;</em>?</li>
+<li><strong>From QuickBooks:</strong> the metaphor-led accessibility (<em>&quot;virtual team&quot;</em>) that makes AI non-threatening for SMB buyers. A <em>&quot;marketing specialist&quot;</em> metaphor (already validated in Mailchimp customer VOCs — <em>&quot;It feels like I got to hire a marketing specialist for free&quot;</em>) is sitting on the shelf, waiting.</li>
+</ul>
+<hr>
+<h2 id="part-5-appendix-primary-sources"><a href="#part-5-appendix-primary-sources" class="anchor">#</a>Part 5 — Appendix: Primary Sources</h2>
+<h3 id="quickbooks"><a href="#quickbooks" class="anchor">#</a>QuickBooks</h3>
+<ol>
+<li><a href="https://quickbooks.intuit.com/ai-accounting/">https://quickbooks.intuit.com/ai-accounting/</a></li>
+<li><a href="https://quickbooks.intuit.com/new-quickbooks-intuit-platform/">https://quickbooks.intuit.com/new-quickbooks-intuit-platform/</a></li>
+<li><a href="https://www.intuit.com/intuitassist/">https://www.intuit.com/intuitassist/</a></li>
+<li><a href="https://www.intuit.com/enterprise/ai-agents/">https://www.intuit.com/enterprise/ai-agents/</a></li>
+<li><a href="https://quickbooks.intuit.com/pricing/">https://quickbooks.intuit.com/pricing/</a></li>
+<li><a href="https://investors.intuit.com/news-events/press-releases/detail/1258/">https://investors.intuit.com/news-events/press-releases/detail/1258/</a></li>
+<li><a href="https://investors.intuit.com/news-events/press-releases/detail/1277/">https://investors.intuit.com/news-events/press-releases/detail/1277/</a></li>
+<li><a href="https://fortune.com/2025/06/27/intuit-ceo-sasan-goodarzi-on-the-most-significant-launch-weve-ever-had-in-our-history/">https://fortune.com/2025/06/27/intuit-ceo-sasan-goodarzi-on-the-most-significant-launch-weve-ever-had-in-our-history/</a></li>
+<li><a href="https://report.woodard.com/articles/intuit-investor-day-2025-game-changers-accountants-need-to-know-fpwr">https://report.woodard.com/articles/intuit-investor-day-2025-game-changers-accountants-need-to-know-fpwr</a></li>
+<li><a href="https://www.redhammer.io/blog/intuit-connect-2025-the-future-of-mid-market-accounting-is-here">https://www.redhammer.io/blog/intuit-connect-2025-the-future-of-mid-market-accounting-is-here</a></li>
+</ol>
+<h3 id="turbotax"><a href="#turbotax" class="anchor">#</a>TurboTax</h3>
+<ol>
+<li><a href="https://turbotax.intuit.com/">https://turbotax.intuit.com/</a></li>
+<li><a href="https://turbotax.intuit.com/personal-taxes/online/live/how-it-works.htm">https://turbotax.intuit.com/personal-taxes/online/live/how-it-works.htm</a></li>
+<li><a href="https://turbotax.intuit.com/commercials/super-bowl/">https://turbotax.intuit.com/commercials/super-bowl/</a></li>
+<li><a href="https://investors.intuit.com/news-events/press-releases/detail/1233/">https://investors.intuit.com/news-events/press-releases/detail/1233/</a></li>
+<li><a href="https://investors.intuit.com/news-events/press-releases/detail/1279/">https://investors.intuit.com/news-events/press-releases/detail/1279/</a></li>
+<li><a href="https://investors.intuit.com/news-events/press-releases/detail/1304/">https://investors.intuit.com/news-events/press-releases/detail/1304/</a></li>
+<li><a href="https://blog.turbotax.intuit.com/breaking-news/tax-preparation-powered-by-gen-ai-59318/">https://blog.turbotax.intuit.com/breaking-news/tax-preparation-powered-by-gen-ai-59318/</a></li>
+<li><a href="https://sloanreview.mit.edu/article/turbotax-meets-turbo-innovation-ai-at-intuit/">https://sloanreview.mit.edu/article/turbotax-meets-turbo-innovation-ai-at-intuit/</a></li>
+<li><a href="https://fortune.com/2026/02/15/adrien-brody-turbotax-intuit-marketing-advertising-super-bowl/">https://fortune.com/2026/02/15/adrien-brody-turbotax-intuit-marketing-advertising-super-bowl/</a></li>
+<li><a href="https://www.adweek.com/brand-marketing/turbotax-superbowl-commercial-adrien-brody/">https://www.adweek.com/brand-marketing/turbotax-superbowl-commercial-adrien-brody/</a></li>
+</ol>
+<h3 id="klaviyo"><a href="#klaviyo" class="anchor">#</a>Klaviyo</h3>
+<ol>
+<li><a href="https://www.klaviyo.com/composer">https://www.klaviyo.com/composer</a></li>
+<li><a href="https://www.klaviyo.com/newsroom/composer">https://www.klaviyo.com/newsroom/composer</a></li>
+<li><a href="https://investors.klaviyo.com/news/news-details/2026/Klaviyo-Expands-AI-Agents-to-Power-the-Autonomous-B2C-CRM/">https://investors.klaviyo.com/news/news-details/2026/Klaviyo-Expands-AI-Agents-to-Power-the-Autonomous-B2C-CRM/</a></li>
+<li><a href="https://www.klaviyo.com/blog/klaviyo-ai-for-autonomous-marketing-and-customer-service">https://www.klaviyo.com/blog/klaviyo-ai-for-autonomous-marketing-and-customer-service</a></li>
+<li><a href="https://www.klaviyo.com/newsroom/strategic-partnership-google">https://www.klaviyo.com/newsroom/strategic-partnership-google</a></li>
+<li><a href="https://www.businesswire.com/news/home/20251209387836/en/Klaviyo-Appoints-Chano-Fernndez-as-co-CEO">https://www.businesswire.com/news/home/20251209387836/en/Klaviyo-Appoints-Chano-Fernndez-as-co-CEO</a></li>
+<li><a href="https://www.klaviyo.com/blog/kbos-2025-takeaways">https://www.klaviyo.com/blog/kbos-2025-takeaways</a></li>
+<li><a href="https://www.fool.com/earnings/call-transcripts/2026/02/11/klaviyo-kvyo-q4-2025-earnings-call-transcript/">https://www.fool.com/earnings/call-transcripts/2026/02/11/klaviyo-kvyo-q4-2025-earnings-call-transcript/</a></li>
+<li><a href="https://www.klaviyo.com/pricing">https://www.klaviyo.com/pricing</a></li>
+<li><a href="https://www.klaviyo.com/compare/klaviyo-vs-mailchimp">https://www.klaviyo.com/compare/klaviyo-vs-mailchimp</a></li>
+</ol>
+<h3 id="salesforce"><a href="#salesforce" class="anchor">#</a>Salesforce</h3>
+<ol>
+<li><a href="https://www.salesforce.com/news/press-releases/2025/10/13/agentic-enterprise-announcement/">https://www.salesforce.com/news/press-releases/2025/10/13/agentic-enterprise-announcement/</a></li>
+<li><a href="https://www.salesforce.com/news/press-releases/2024/09/12/agentforce-announcement/">https://www.salesforce.com/news/press-releases/2024/09/12/agentforce-announcement/</a></li>
+<li><a href="https://www.salesforce.com/agentforce/pricing/">https://www.salesforce.com/agentforce/pricing/</a></li>
+<li><a href="https://www.salesforce.com/news/press-releases/2025/05/15/agentforce-flexible-pricing-news/">https://www.salesforce.com/news/press-releases/2025/05/15/agentforce-flexible-pricing-news/</a></li>
+<li><a href="https://www.salesforce.com/agentforce/what-is-a-reasoning-engine/atlas/">https://www.salesforce.com/agentforce/what-is-a-reasoning-engine/atlas/</a></li>
+<li><a href="https://www.salesforce.com/artificial-intelligence/trusted-ai/">https://www.salesforce.com/artificial-intelligence/trusted-ai/</a></li>
+<li><a href="https://www.salesforce.com/news/stories/five-dreamforce-2025-takeaways/">https://www.salesforce.com/news/stories/five-dreamforce-2025-takeaways/</a></li>
+<li><a href="https://www.forrester.com/blogs/salesforce-dreams-of-the-agentic-enterprise/">https://www.forrester.com/blogs/salesforce-dreams-of-the-agentic-enterprise/</a></li>
+<li><a href="https://fortune.com/2025/10/21/salesforce-marc-benioff-ai-agents-dreamforce-agentforce-eye-on-ai/">https://fortune.com/2025/10/21/salesforce-marc-benioff-ai-agents-dreamforce-agentforce-eye-on-ai/</a></li>
+<li><a href="https://www.adweek.com/brand-marketing/salesforces-super-bowl-59-ad-sees-matthew-mcconaughey-turn-a-travel-nightmare-into-an-ai-win/">https://www.adweek.com/brand-marketing/salesforces-super-bowl-59-ad-sees-matthew-mcconaughey-turn-a-travel-nightmare-into-an-ai-win/</a></li>
+</ol>
+<hr>
+<p><em>Document prepared using the GTM/PMM evaluation framework described in Part 1. All direct quotes are attributed to their primary source and dated through April 2026.</em></p>
+
+    <footer>
+      <p>Sources verified through April 23, 2026 — see Appendix for primary URLs.<br>
+      Word version: <code>AI-PMM-Competitive-Intel.docx</code> &middot; Repo: <a href="https://github.com/deepakp1308/ai-pmm-intel">deepakp1308/ai-pmm-intel</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
